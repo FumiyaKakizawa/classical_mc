@@ -201,13 +201,19 @@ function get_param(type, conf, block, key, default_value)
 end
 
 
-function solve(input_file::String, comm)
+function solve(input_file::String, comm, prefix, seed_shift)
+    open(prefix*"out", "w") do outf
+        solve_(input_file::String, comm, prefix, seed_shift, outf)
+    end
+end
+
+function solve_(input_file::String, comm, prefix, seed_shift, outf)
     if !isfile(input_file)
         error("$input_file does not exists!")
     end
     conf = ConfParse(input_file)
     parse_conf!(conf)
-
+    
     rank = MPI.Comm_rank(comm)
     num_proc = MPI.Comm_size(comm)
 
@@ -216,7 +222,7 @@ function solve(input_file::String, comm)
     temperature_file = retrieve(conf, "model", "temperatures")
     is_xy = get_param(Bool, conf, "model", "xy_spins", false)
     if rank == 0 && is_xy
-        println("Using XY spins")
+        println(outf, "Using XY spins")
     end
 
     num_sweeps       = parse(Int64, retrieve(conf, "simulation", "num_sweeps"))
@@ -246,7 +252,7 @@ function solve(input_file::String, comm)
         error("Number of processes > num_temps")
     end
     if rank == 0
-       println("num of temperatures = ", num_temps)
+       println(outf, "num of temperatures = ", num_temps)
     end
 
     # Decide which temperatures are computed on this process
@@ -260,7 +266,7 @@ function solve(input_file::String, comm)
     updater = SingleSpinFlipUpdater(model)
 
     # Init random number generator
-    Random.seed!(seed + rank)
+    Random.seed!(seed + seed_shift)
 
     # Create accumulator
     acc = Accumulator(num_temps_local)
@@ -305,7 +311,7 @@ function solve(input_file::String, comm)
     # Perform MC
     last_output_time = time_ns()
     if rank == 0
-        println("Starting simulation...")
+        println(outf, "Starting simulation...")
     end
   
     # Create LoopUpdater 
@@ -375,7 +381,7 @@ function solve(input_file::String, comm)
     for sweep in 1:num_sweeps
         # Output roughtly every 10 sececonds
         if rank == 0 && time_ns() - last_output_time > 1e+10
-            println("Done $sweep sweeps")
+            println(outf, "Done $sweep sweeps")
             last_output_time = time_ns()
             flush(stdout)
         end
@@ -392,7 +398,7 @@ function solve(input_file::String, comm)
             energy_local[it] += dE
             single_spin_flip_acc[it] = acc_rate
         end
-        #println("one_sweep", " ",ts_end - ts_start)
+        #println(outf, "one_sweep", " ",ts_end - ts_start)
         push!(elpsCPUtime, CPUtime_us() - ts_start)
 
         # Check if energy is correct
@@ -521,7 +527,7 @@ function solve(input_file::String, comm)
                     push!(mq_q0_correlation[it],init_mq_q0[it]*mq_q0[it])
                     push!(mq_sqrt3_correlation[it],init_mq_sqrt3[it]*2mq_sqrt3[it])
                     if mod(sweep, 100) == 0
-                        #println(sweep, "th: ", tmp/num_spins)
+                        #println(outf, sweep, "th: ", tmp/num_spins)
                     end
   
                 end
@@ -583,37 +589,37 @@ function solve(input_file::String, comm)
     if use_neq
         for itemp in 1:num_temps_local
 
-            open("Gt_$(itemp+start_idx-1).dat","w") do fp
+            open(prefix*"Gt_$(itemp+start_idx-1).dat","w") do fp
                for itime in 1:length(correlation_func[itemp])
                    println(fp, itime, " ", correlation_func[itemp][itime])
                end
             end
 
-            open("maf_$(itemp+start_idx-1).dat","w") do fp
+            open(prefix*"maf_$(itemp+start_idx-1).dat","w") do fp
                #for itime in 1:length(maf_time_evo[itemp])
                    #println(fp, itime, " ", maf_time_evo[itemp][itime])
                #end
             end
 
-            open("fvc_$(itemp+start_idx-1).dat","w") do fp
+            open(prefix*"fvc_$(itemp+start_idx-1).dat","w") do fp
                for itime in 1:length(fvc_correlation[itemp])
                    println(fp, itime, " ", fvc_correlation[itemp][itime])
                end
             end
 
-            open("afvc_$(itemp+start_idx-1).dat","w") do fp
+            open(prefix*"afvc_$(itemp+start_idx-1).dat","w") do fp
                for itime in 1:length(afvc_correlation[itemp])
                    println(fp, itime, " ", afvc_correlation[itemp][itime])
                end
             end
 
-            open("mq_q0_$(itemp+start_idx-1).dat","w") do fp
+            open(prefix*"mq_q0_$(itemp+start_idx-1).dat","w") do fp
                 for itime in 1:length(mq_q0_correlation[itemp])
                    println(fp, itime, " ", mq_q0_correlation[itemp][itime])
                 end
             end
 
-            open("mq_sqrt3_$(itemp+start_idx-1).dat","w") do fp
+            open(prefix*"mq_sqrt3_$(itemp+start_idx-1).dat","w") do fp
                 for itime in 1:length(mq_sqrt3_correlation[itemp])
                    println(fp, itime, " ", mq_sqrt3_correlation[itemp][itime])
                 end
@@ -622,25 +628,24 @@ function solve(input_file::String, comm)
     end
 
     if rank == 0
-        prefix = ""
-        println()
+        println(outf)
         open(prefix*"E.txt", "w") do f
             println(f, "#<E> <E^2> <C>")
             for i in 1:num_temps
                 println(f, "$(rex.temps[i]) $(E[i]) $(E2[i]) $(((E2[i]  - E[i]^2) / (rex.temps[i]^2)) / num_spins)")
-                println("$(rex.temps[i]) $(E[i]) $(E2[i]) $(((E2[i]  - E[i]^2) / (rex.temps[i]^2)) / num_spins)")
+                println(outf, "$(rex.temps[i]) $(E[i]) $(E2[i]) $(((E2[i]  - E[i]^2) / (rex.temps[i]^2)) / num_spins)")
             end
         end
       
-        println("single_spin_flip_acc: ", single_spin_flip_acc)
-        println("Acceptant rate of loop update: ")
+        println(outf, "single_spin_flip_acc: ", single_spin_flip_acc)
+        println(outf, "Acceptant rate of loop update: ")
         for i in 1:num_temps
-            println(rex.temps[i], " ", loop_found_rate[i], " ", loop_accept_rate[i])
+            println(outf, rex.temps[i], " ", loop_found_rate[i], " ", loop_accept_rate[i])
         end
 
-        println("<CPUtime> ")
+        println(outf, "<CPUtime> ")
         for (i, t) in enumerate(CPUtime)
-            println(" rank=", i-1, " : $t")
+            println(outf, " rank=", i-1, " : $t")
         end
     
         # update initial temperature distribution.        
@@ -652,20 +657,20 @@ function solve(input_file::String, comm)
         end
      
         for i in 1:num_temps
-            println("af2: $(rex.temps[i]) $(m2_af[i])")
-            println("op2: $(rex.temps[i]) $(T2_op[i])")
-            println("Ferro_vc2: $(rex.temps[i]) $(Ferro_vc2[i])")
-            println("AF_vc2: $(rex.temps[i]) $(AF_vc2[i])")
-            println("m2q0: $(rex.temps[i]) $(m2q_q0[i])")
-            println("m2_sqrt3: $(rex.temps[i]) $(m2q_sqrt3[i])")
-            println("m120degs: $(rex.temps[i]) $(m120degs[i])")
-            println("af4: $(rex.temps[i]) $(m4_af[i])")
-            println("op4: $(rex.temps[i]) $(T4_op[i])")
-            println("Ferro_vc4: $(rex.temps[i]) $(Ferro_vc4[i])")
-            println("AF_vc4: $(rex.temps[i]) $(AF_vc4[i])")
-            println("m4q0: $(rex.temps[i]) $(m4q_q0[i])")
-            println("m4_sqrt3: $(rex.temps[i]) $(m4q_sqrt3[i])")
-            println("m120degs4: $(rex.temps[i]) $(m120degs4[i])")
+            println(outf, "af2: $(rex.temps[i]) $(m2_af[i])")
+            println(outf, "op2: $(rex.temps[i]) $(T2_op[i])")
+            println(outf, "Ferro_vc2: $(rex.temps[i]) $(Ferro_vc2[i])")
+            println(outf, "AF_vc2: $(rex.temps[i]) $(AF_vc2[i])")
+            println(outf, "m2q0: $(rex.temps[i]) $(m2q_q0[i])")
+            println(outf, "m2_sqrt3: $(rex.temps[i]) $(m2q_sqrt3[i])")
+            println(outf, "m120degs: $(rex.temps[i]) $(m120degs[i])")
+            println(outf, "af4: $(rex.temps[i]) $(m4_af[i])")
+            println(outf, "op4: $(rex.temps[i]) $(T4_op[i])")
+            println(outf, "Ferro_vc4: $(rex.temps[i]) $(Ferro_vc4[i])")
+            println(outf, "AF_vc4: $(rex.temps[i]) $(AF_vc4[i])")
+            println(outf, "m4q0: $(rex.temps[i]) $(m4q_q0[i])")
+            println(outf, "m4_sqrt3: $(rex.temps[i]) $(m4q_sqrt3[i])")
+            println(outf, "m120degs4: $(rex.temps[i]) $(m120degs4[i])")
         end
 
 <<<<<<< HEAD
@@ -709,7 +714,7 @@ function solve(input_file::String, comm)
 
 =======
         for it in 1:num_temps_local
-            fid = h5open("ss$(it+start_idx-1).h5","w")
+            fid = h5open(prefix*"ss$(it+start_idx-1).h5","w")
             for j in 1:3
                 fid["$(it+start_idx-1)th_temps/ss$(j)"] = ss[it][j,:]
             end
@@ -725,7 +730,7 @@ function solve(input_file::String, comm)
     #end
 #
     # Stat of Replica Exchange MC
-    print_stat(rex, comm)
+    print_stat(rex, comm, outf)
 end
 
 end
