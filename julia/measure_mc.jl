@@ -41,7 +41,6 @@ end
 
 
 function compute_mq(q,kagome,spins,triangles)
-
     @assert length(keys(kagome)) == length(spins)
 
     sq = fill((0.0+0im,0.0+0im,0.0+0im),3)
@@ -69,6 +68,18 @@ function compute_m_120degrees(spins)
 end
 
 
+function compute_sisj(num_triangles, spins, triangles)
+    num_spins = length(spins)
+    sisj = Array{Float64,3}(undef, num_spins, 3, num_triangles)
+    for it in 1:num_triangles
+        for isublatt in 1:3
+            for ispin in 1:num_spins
+               sisj[ispin,isublatt,it] = dot(spins[ispin], spins[triangles[it][isublatt]])
+            end
+        end
+    end
+    sisj
+end
 
 # vector spin chirality defined as sum of outer product of spins in unit triangular with counterclockwise rotation.
 #=
@@ -93,9 +104,7 @@ function compute_vector_chirality(spins::Vector{HeisenbergSpin},
 end
 =#
 
-function mycross(s1, s2)
-    s1[1]s2[2] - s1[2]s2[1]
-end
+mycross(s1, s2) = s1[1]s2[2] - s1[2]s2[1]
 
 function compute_vector_chirality(spins::AbstractArray{Float64,2},
                                   triangles::Vector{Tuple{Int64,Int64,Int64}})
@@ -114,6 +123,31 @@ function compute_vector_chirality(spins::AbstractArray{Float64,2},
     return vc / num_spins
 end
 
+function compute_all_vector_chiralities(spins::AbstractArray{Float64,2},
+                                  triangles::Vector{Tuple{Int64,Int64,Int64}})
+    num_spins = size(spins)[2]
+    num_triangles = length(triangles)
+    vc = zeros(Float64, num_triangles)
+    @assert num_spins == 3num_triangles
+    for it in eachindex(triangles)
+        i = triangles[it]
+        for j in 1:3
+            s1 = view(spins, :, i[j])
+            s2 = view(spins, :, i[ifelse(j==3,1,j+1)])
+            vc[it] += mycross(s1, s2)
+        end
+    end
+    vc
+end
+
+function compute_vector_chiralities(spins::AbstractArray{Float64,2}, utriangles, dtriangles)
+    @assert length(utriangles) == length(dtriangles)
+    num_spins = size(spins)[2]
+    uc_all = compute_all_vector_chiralities(spins, utriangles)
+    dc_all = compute_all_vector_chiralities(spins, dtriangles)
+    uc, dc = sum(uc_all)/num_spins, sum(dc_all)/num_spins
+    (uc+dc)^2/3, (uc-dc)^2/3, uc_all[1] * [uc_all; dc_all]
+end
 
 function compute_ferro_vector_chirality(spins::AbstractArray{Float64,2}, utriangles, dtriangles)
     @assert length(utriangles) == length(dtriangles)
@@ -122,14 +156,12 @@ function compute_ferro_vector_chirality(spins::AbstractArray{Float64,2}, utriang
     return fvc / 3 # vector spin chirality of q=0 state is 3,larger than that of all other states.
 end
 
-
 function compute_af_vector_chirality(spins::AbstractArray{Float64,2}, utriangles, dtriangles)
     @assert length(utriangles) == length(dtriangles)
     fvc = compute_vector_chirality(spins,utriangles) - compute_vector_chirality(spins,dtriangles)
     fvc ^= 2
     return fvc / 3 # vector spin chirality of √3×√3 state is 3,larger than that of all other states.
 end
-
 
 delta(a,b) = ifelse(a==b,1,0) 
 
