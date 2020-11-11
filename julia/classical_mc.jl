@@ -692,53 +692,6 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             println(outf, "m120degs4: $(rex.temps[i]) $(m120degs4[i])")
         end
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-      # update initial temperature distribution.        
-      open("temperatures.txt","w") do fp
-           println(fp,num_temps)
-           for i in 1:num_temps
-               println(fp,rex.temps[i])
-           end
-      end
-       
-      for i in 1:num_temps
-          #println("ll: $(rex.temps[i]) $(ave_loop_length[i])")
-      end
-
-      for i in 1:num_temps
-          println("af2: $(rex.temps[i]) $(m2_af[i])")
-          println("op2: $(rex.temps[i]) $(T2_op[i])")
-          println("Ferro_vc2: $(rex.temps[i]) $(Ferro_vc2[i])")
-          println("AF_vc2: $(rex.temps[i]) $(AF_vc2[i])")
-          println("m2q0: $(rex.temps[i]) $(m2q_q0[i])")
-          println("m2_sqrt3: $(rex.temps[i]) $(m2q_sqrt3[i])")
-          println("m120degs2: $(rex.temps[i]) $(m120degs[i])")
-          println("af4: $(rex.temps[i]) $(m4_af[i])")
-          println("op4: $(rex.temps[i]) $(T4_op[i])")
-          println("Ferro_vc4: $(rex.temps[i]) $(Ferro_vc4[i])")
-          println("AF_vc4: $(rex.temps[i]) $(AF_vc4[i])")
-          println("m4q0: $(rex.temps[i]) $(m4q_q0[i])")
-          println("m4_sqrt3: $(rex.temps[i]) $(m4q_sqrt3[i])")
-          println("m120degs4: $(rex.temps[i]) $(m120degs4[i])")
-      end
-
-      for it in 1:num_temps_local
-          fid = h5open("ss/ss$(it+start_idx-1).h5","w")
-          for j in 1:3
-              fid["$(it+start_idx-1)th_temps/ss$(j)"] = ss[it][j,:]
-          end
-      end
-
-
-
-=======
-        for it in 1:num_temps_local
-            fid = h5open(prefix*"ss$(it+start_idx-1).h5","w")
-            for j in 1:3
-                fid["$(it+start_idx-1)th_temps/ss$(j)"] = ss[it][j,:]
-            end
-=======
         h5open(prefix*"corr.h5", "w") do fid
             # ss is an array of arrays of shape (3, num_spins).
             # We "reshape" it into an array of shape (3, num_spins, num_temps).
@@ -746,9 +699,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             #println(size(tmp))
             fid["ss"] = cat(ss[:,:,CartesianIndex()]..., dims=3)
             fid["vc"] = cat(vc_corr[:,CartesianIndex()]..., dims=2)
->>>>>>> 501d5c713d3ea22293671febb53afedbf5790d53
         end
->>>>>>> ce02a66f2ea64c5516d0f1dec2ac5b611f657e48
     end
     flush(stdout)
     MPI.Barrier(comm)
