@@ -707,7 +707,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     fid = nothing
     if rank == 0
         fid = h5open(prefix*"out.h5" , "w")
-        fid["temperatures"] = temps
+        fid["temperatures"] = rex.temps
     end
     save_to_hdf5!(acc, fid, comm)
     if rank == 0
