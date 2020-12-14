@@ -1,5 +1,5 @@
 #parameters for system
-L = 3
+L = 300
 J1 = -1.
 J2 = 0.1
 J1 = (J1,J1,J1)
