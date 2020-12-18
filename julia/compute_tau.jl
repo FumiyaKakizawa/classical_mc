@@ -11,7 +11,6 @@ function out_to_txt(h5file,names)
     fid = h5open(h5file,"r")
     temps = fid["temperatures"]
     num_temps = length(temps)
-
     for iname in names
         data = fid["$(iname)/mean"]
         name = split(iname,"_corr")[1]
