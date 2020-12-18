@@ -2,8 +2,31 @@ using HDF5
 using PyPlot
 using LsqFit
 
-
+h5file = "2d_out.h5"
 names = ["Gt","mq_sqrt3_corr", "mq_q0_corr", "afvc_corr", "fvc_corr","m_120degs_corr"]
+
+
+function out_to_txt(h5file,names)
+
+    fid = h5open(h5file,"r")
+    temps = fid["temperatures"]
+    num_temps = length(temps)
+    for iname in names
+        data = fid["$(iname)/mean"]
+        name = split(iname,"_corr")[1]
+        mc_steps = length(data[:,1])
+        for it in 1:num_temps
+            open("$(name)_$(it).dat","w") do fp
+                for i in 1:mc_steps
+                    println(fp,i," ",data[i,it])
+                end
+            end
+        end
+    end
+    close(fid)
+end
+
+out_to_txt(h5file,names)
 
 
 function save_plot_corr(h5file,names)
@@ -69,11 +92,13 @@ function execute(fid,name)
     
 end
 
+#=
 h5file = "2d_out.h5"
 fid = h5open(h5file,"r")
 name = "Gt"
 Tc_of_Gt = execute(fid,name)
 println("Tc of Gt = $(Tc_of_Gt)")
+=#
 
 function execute_all(h5file,names)
 
