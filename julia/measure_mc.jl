@@ -146,7 +146,8 @@ function compute_vector_chiralities(spins::AbstractArray{Float64,2}, utriangles,
     uc_all = compute_all_vector_chiralities(spins, utriangles)
     dc_all = compute_all_vector_chiralities(spins, dtriangles)
     uc, dc = sum(uc_all)/num_spins, sum(dc_all)/num_spins
-    (uc+dc)^2/3, (uc-dc)^2/3, uc_all[1] * [uc_all; dc_all]
+#    (uc+dc)^2/3, (uc-dc)^2/3, uc_all[1] * [uc_all; dc_all]
+    (uc+dc)^2/3, (uc-dc)^2/3 
 end
 
 function compute_ferro_vector_chirality(spins::AbstractArray{Float64,2}, utriangles, dtriangles)

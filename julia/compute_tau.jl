@@ -64,7 +64,7 @@ function execute(fid,name)
     end
     
     p02 = [1.0,1.0,1.0]
-    Tc = compute_Tc(temps,τs,p02)
+    Tc = compute_Tc(collect(temps),τs,p02)
     Tc
     
 end
@@ -73,7 +73,7 @@ h5file = "2d_out.h5"
 fid = h5open(h5file,"r")
 name = "Gt"
 Tc_of_Gt = execute(fid,name)
-#println("Tc of Gt = $(Tc_of_Gt)")
+println("Tc of Gt = $(Tc_of_Gt)")
 
 function execute_all(h5file,names)
 
