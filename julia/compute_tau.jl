@@ -7,7 +7,6 @@ names = ["Gt","mq_sqrt3_corr", "mq_q0_corr", "afvc_corr", "fvc_corr","m_120degs_
 
 
 function out_to_txt(h5file,names)
-
     fid = h5open(h5file,"r")
     temps = fid["temperatures"]
     num_temps = length(temps)
@@ -18,17 +17,16 @@ function out_to_txt(h5file,names)
         for it in 1:num_temps
             open("$(name)_$(it).dat","w") do fp
                 for i in 1:mc_steps
-                    println(fp,i," ",data[i,it])
+                    println(fp,i," ",data[:,it][i])
                 end
             end
         end
     end
     close(fid)
 end
-
 out_to_txt(h5file,names)
 
-
+#=
 function save_plot_corr(h5file,names)
 
     fid = h5open(h5file,"r")
@@ -52,8 +50,8 @@ function save_plot_corr(h5file,names)
     close(fid)
 
 end
-
 #save_plot_corr("2d_out.h5",names)
+=#
 
 
 function compute_τ(tdatas,ydatas,p0)
@@ -61,6 +59,29 @@ function compute_τ(tdatas,ydatas,p0)
     fit = curve_fit(model, tdatas, ydatas, p0)
     fit.param[2]
 end
+
+function get_τs(h5file,names,p0)
+    fid = h5open(h5file,"r")
+    temps = fid["temperatures"]
+    num_temps = length(temps)
+    τs = Dict()
+    for iname in names
+        data = fid["$(iname)/mean"]
+        name = split(iname,"_corr")[1]
+        mc_steps = length(data[:,1])
+        time = (i for i in 1:mc_steps)
+        τs[name] = Vector{Float64}(undef,num_temps)
+        for it in 1:num_temps
+            data_log = log.(data[:,it])
+            τs[name][it] = compute_τ(mc_steps,data_log,p0)
+        end
+    end
+    close(fid)
+    τs
+end
+p0 = [1.0,1.0]
+τs = get_τs(h5file,names,p0)
+println("τs = $(τs)")
 
 
 function compute_Tc(temps,τs,p0)

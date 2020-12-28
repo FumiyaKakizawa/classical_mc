@@ -95,7 +95,6 @@ function test_compute_τ()
     τ = compute_τ(test_tdata,test_ydata,p0)
     
     @test τ ≈ test_pdata[2]
-
 end
 test_compute_τ()
 
@@ -113,10 +112,10 @@ function test_compute_Tc()
     @test Tc ≈ test_pdata[3]
 
 end
-test_compute_Tc()
+#test_compute_Tc()
 
 
-#= function
+#= function 
     test_model(t,p) = p[1]*exp.(-(1/p[2])t)
     test_pdata = [5.0,5.0]
     num_data = 10
