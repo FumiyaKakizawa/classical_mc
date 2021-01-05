@@ -95,10 +95,12 @@ function test_compute_τ()
     τ = compute_τ(test_tdata,test_ydata,p0)
     
     @test τ ≈ test_pdata[2]
-
 end
 test_compute_τ()
 
+#= 
+[HERE] 21.1.5
+=#
 
 function test_compute_Tc()
 
@@ -108,15 +110,17 @@ function test_compute_Tc()
     test_ydata = test_model(test_tdata,test_pdata)
     println("test_ydata: ",test_ydata)
 
-    p0 = [1.0,1.0,1.0]
-    Tc = compute_Tc(test_tdata,test_ydata,p0)
+    a  = 0.8
+    p0 = a*[1.0,1.0,1.0]
+    Tc = compute_Tc2(test_tdata,test_ydata,p0)
+    #Tc = 0.0 
     @test Tc ≈ test_pdata[3]
 
 end
 test_compute_Tc()
 
 
-#= function
+#= function 
     test_model(t,p) = p[1]*exp.(-(1/p[2])t)
     test_pdata = [5.0,5.0]
     num_data = 10
