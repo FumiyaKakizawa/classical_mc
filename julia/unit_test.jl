@@ -110,15 +110,18 @@ function test_compute_Tc()
     test_ydata = test_model(test_tdata,test_pdata)
     println("test_ydata: ",test_ydata)
 
-    a  = 0.8
+    a  = 0.9
     p0 = a*[1.0,1.0,1.0]
-    Tc = compute_Tc2(test_tdata,test_ydata,p0)
+    Tc = compute_Tc(test_tdata,test_ydata,p0)
     #Tc = 0.0 
     @test Tc ≈ test_pdata[3]
 
 end
 test_compute_Tc()
 
+#=
+[HERE] 21.1.5
+=#
 
 #= function 
     test_model(t,p) = p[1]*exp.(-(1/p[2])t)

@@ -3,7 +3,7 @@ using PyPlot
 using LsqFit
 
 h5file = "2d_out.h5"
-names = ["Gt","mq_sqrt3_corr", "mq_q0_corr", "afvc_corr", "fvc_corr","m_120degs_corr"]
+names = ["mq_sqrt3_corr", "mq_q0_corr", "afvc_corr", "fvc_corr","m_120degs_corr"]
 
 
 function out_to_txt(h5file,names)
@@ -136,15 +136,15 @@ function get_Tc(temps,τs,p0)
         #Tcs[key] = 0.0
         println("DEBUG A: $(key) = $(τs[key])")
         println("DEBUG B: $(key) = $(typeof(τs[key]))")
-        Tcs[key] = compute_Tc2(temps[:],τs[key],p0)
+        Tcs[key] = compute_Tc(temps[:],τs[key],p0)
     end
     Tcs
 end
-a = 0.09
+#=
+a = 0.9
 p0 = a * [1.0,1.0,1.0]
 Tcs = get_Tc(temperatures,τs,p0)
 println("Tcs = $(Tcs)")
-
 
 function out_to_txt(Tcs)
     for key in keys(Tcs)
@@ -154,19 +154,6 @@ function out_to_txt(Tcs)
     end
 end
 out_to_txt(Tcs)
-
-
-#=
-function compute_Tc(p01,p02,temps,data::Array{Float64,2})
-
-    num_temps = length(temps)
-    @assert num_temps == size(data)[2]
-    tdata = [i for i in 1:length(data[:,1])]
-    τs = zeros(Float64,num_temps)
-    for it in 1:num_temps
-        ydata = log.(data[:,it])
-        τs[it] = compute_τ(tdata,ydata,p01)
-    end
-end
 =#
+
 
