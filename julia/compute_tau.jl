@@ -69,7 +69,7 @@ function compute_τ2(tdatas,ydatas,p0)
 end
 
 
-function get_τs(h5file,names,p0,cutoff)
+function get_τs(h5file,names,p0,begin_idx,end_idx)
     fid = h5open(h5file,"r")
     temps = fid["temperatures"]
     num_temps = length(temps)
@@ -81,18 +81,19 @@ function get_τs(h5file,names,p0,cutoff)
         time = [i for i in 1:mc_steps]
         τs[name] = Vector{Float64}(undef,num_temps)
         for it in 1:num_temps
-            #data_log = log.(data[:,it][1:cutoff])
-            data_raw = data[:,it][1:cutoff]
-            #τs[name][it] = compute_τ(time[1:cutoff],data_log,p0)
-            τs[name][it] = compute_τ2(time[1:cutoff],data_raw,p0)
+            #data_log = log.(data[:,it][begin_idx:end_idx])
+            data_raw = data[:,it][begin_idx:end_idx]
+            #τs[name][it] = compute_τ(time[begin_idx:end_idx],data_log,p0)
+            τs[name][it] = compute_τ2(time[begin_idx:end_idx],data_raw,p0)
         end
     end
     #close(fid)
     τs, temps
 end
-p0 = [1.0,1.0]
-cutoff = 10^2
-τs,temperatures = get_τs(h5file,names,p0,cutoff)
+p0         = [1.0,1.0]
+begin__idx = 10^1
+end_idx    = 10^2
+τs,temperatures = get_τs(h5file,names,p0,begin_idx,end_idx)
 println("τs = $(τs)")
 
 
