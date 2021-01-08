@@ -69,10 +69,11 @@ function compute_τ2(tdatas,ydatas,p0)
 end
 
 
-function get_τs(h5file,names,p0,begin_idx,end_idx)
+function get_τs(h5file,names,p0,min_temp,max_temp,begin_idx,end_idx)
     fid = h5open(h5file,"r")
     temps = fid["temperatures"]
     num_temps = length(temps)
+    @assert 1 <= min_temp <= max_temp <= num_temps
     τs = Dict()
     for iname in names
         data = fid["$(iname)/mean"]
@@ -80,7 +81,7 @@ function get_τs(h5file,names,p0,begin_idx,end_idx)
         mc_steps = length(data[:,1])
         time = [i for i in 1:mc_steps]
         τs[name] = Vector{Float64}(undef,num_temps)
-        for it in 1:num_temps
+        for it in min_temp:max_temp
             #data_log = log.(data[:,it][begin_idx:end_idx])
             data_raw = data[:,it][begin_idx:end_idx]
             #τs[name][it] = compute_τ(time[begin_idx:end_idx],data_log,p0)
@@ -91,6 +92,8 @@ function get_τs(h5file,names,p0,begin_idx,end_idx)
     τs, temps
 end
 p0         = [1.0,1.0]
+min_temp   = 0.5
+max_temp   = 1.0
 begin__idx = 10^1
 end_idx    = 10^2
 τs,temperatures = get_τs(h5file,names,p0,begin_idx,end_idx)
