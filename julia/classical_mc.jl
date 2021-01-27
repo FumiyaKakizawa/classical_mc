@@ -613,12 +613,14 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
   
 
     # To save to HDF5 file,add correlation functions to accumulator.
-    add!(acc,"Gt",correlation_func)
-    add!(acc,"fvc_corr",fvc_correlation)
-    add!(acc,"afvc_corr",afvc_correlation)
-    add!(acc,"mq_q0_corr",mq_q0_correlation)
-    add!(acc,"mq_sqrt3_corr",mq_sqrt3_correlation)
-    add!(acc,"m_120degs_corr",m_120degs_correlation)
+    if use_neq
+        add!(acc,"Gt",correlation_func)
+        add!(acc,"fvc_corr",fvc_correlation)
+        add!(acc,"afvc_corr",afvc_correlation)
+        add!(acc,"mq_q0_corr",mq_q0_correlation)
+        add!(acc,"mq_sqrt3_corr",mq_sqrt3_correlation)
+        add!(acc,"m_120degs_corr",m_120degs_correlation)
+    end
 
     # Output time evolution of order parameter.
     #=
