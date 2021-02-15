@@ -1,11 +1,12 @@
 
 set rmargin 5
+set lmargin 10
 set xlabel "temperature"
 set xlabel font "Alias,15"
 set ylabel "logarithm of relaxation time"
 set ylabel font "Alias,15"
 set title font "Alias,12"
-set title "relaxation time of dynamical correlation function of mq_sqrt3:J2=0.5,L=900"
+set title "relaxation time of dynamical correlation function of mq-sqrt3:J2=0.5,L=1800"
 
 f(x) = a + b/sqrt(x-c)
 a=1e0

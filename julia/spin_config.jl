@@ -1,44 +1,77 @@
 
 using LinearAlgebra
-using HDF5
 using PyPlot
 
-# prameters for system.
-num_stack = 1
 
-# lattice vectors
-Type3dVector = Tuple{Float64,Float64,Float64}
-l = 1.
-lat_vec1 = l .* (2.,0.,0.)
-lat_vec2 = l .* (2*cos(pi/3),2*sin(pi/3),0.)
-lat_vec3 = l .* (0.,0.,1.)
-
-function mk_stacked_structure(L::Int64,num_stack::Int64,a1::Type3dVector,a2::Type3dVector,a3::Type3dVector,num_spins::Int64)
-    index = 1
-    temp = fill((0.,0.,0.), num_spins)
-    for layer in 1:num_stack
-        for (i,j) in Iterators.product(1:L,1:L)
-            A = (i-1).* a1 .+ (j-1).*a2 .+ (layer-1).*a3
-            B = A .+ a1./2
-            C = A .+ a2./2
-            temp[index  ] = A
-            temp[index+1] = B
-            temp[index+2] = C
-            index += 3
+function read_file(file::String)
+    s = Vector{Tuple{Float64,Float64,Float64}}(undef,0)
+    open(file,"r") do fp
+        num_s = parse(Int64,readline(fp))
+        for _ in 1:num_s
+            str = split(readline(fp))
+            idx = parse(Int64,str[1])
+            x   = parse(Float64,str[2])
+            y   = parse(Float64,str[3])
+            z   = parse(Float64,str[4])
+            push!(s,(x,y,z))
         end
     end
-    return temp
+    s
 end
 
-function plot_spin_direction(lattice::Array{Tuple{Float64,Float64,Float64},1},spins_x::Array{Float64,1},spins_y::Array{Float64,1},num_spins::Int64)
+kagome = read_file("kagome.txt")
+#println(kagome)
+spins_1  = read_file("spin_config_1.txt")
+#println(spins_1)
+
+function test(s,test_file)
+    num_s = length(s)
+    open(test_file,"w") do fp
+        println(fp,num_s)
+        for i in 1:num_s
+            println(fp,i," ",s[i][1]," ",s[i][2]," ",s[i][3])
+        end
+    end
+end
+
+#test(spins_1,"test_spin_config_1.txt")
+
+function site_to_coord(kagome,a1,a2)
+
+    #(Float64,Float64,Float64)->(Int64,Int64,Int64)
+    num_sites = length(kagome)
+    sites = Vector{Tuple{Int64,Int64,Int64}}(undef,num_sites)
+    for is in 1:num_sites
+        sites[is] = Int.(kagome[is])
+    end
+    
+    coord = Vector{Tuple{Float64,Float64,Float64}}(undef,num_sites)
+    for is in 1:num_sites
+        temp = sites[is][1].*a1 .+ sites[is].*a2
+        push!(coord,temp)
+    end
+    #println(coord)
+    coord
+end
+
+a1 = (1.0,0.0,0.0)
+a2 = (-1/2,sqrt(3)/2,0.0)
+kagome = site_to_coord(kagome,a1,a2)
+#test(kagome,"test_kagome.txt") #temporary test
+
+function plot_spin_direction(kagome,spins)
     c = "red"
     lw = 0.5
     ls = :dash
     
-    lattx = [lattice[i][1] for i in 1:length(lattice)]
-    latty = [lattice[i][2] for i in 1:length(lattice)]
+    num_sites = length(kagome)
+    @assert length(spins) == num_sites
+    site_x = [kagome[i][1] for i in 1:num_sites]
+    site_y = [kagome[i][2] for i in 1:num_sites]
+    spin_x = [spins[i][2]  for i in 1:num_sites]
+    spin_y = [spins[i][2]  for i in 1:num_sites]
     
-    PyPlot.quiver(lattx,latty,spins_x,spins_y,pivot=:middle)
+    PyPlot.quiver(site_x,site_y,spin_x,spin_y,pivot=:middle)
     
     for i in 1:length(lattx)
         for j in 1:length(latty)
@@ -51,7 +84,7 @@ function plot_spin_direction(lattice::Array{Tuple{Float64,Float64,Float64},1},sp
     end
     
 end
-
+#=
 # pull numerical date from h5 file.
 
 fp = h5open("L9.h5","r") 
@@ -73,3 +106,4 @@ PyPlot.title("spin configuration at $(L"T=0.001") and $(L"J_2=0.005")")
 savefig("spin_config")
 
 close(fp)
+=#
