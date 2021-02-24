@@ -2,10 +2,10 @@ using HDF5
 
 obs_name1 = "mq_sqrt3_corr"
 obs_name2 = "afvc_corr"
-L = 900
-num_temps  = 21
-num_sample = 4
-num_sweeps = 20000
+L = 1800
+num_temps  = 11
+num_sample = 15
+num_sweeps = 2000
 interval_meas = 10
 num_meas = num_sweeps ÷ interval_meas + 1
 
@@ -19,7 +19,11 @@ function ave(name,L,num_temps,num_sample,num_meas)
         obs = fid["$(name)/mean"]
         @assert size(obs) == (num_meas,num_temps)
         for it in 1:num_temps
-            total[:,it] .+= obs[:,it]
+            println("DEBUG A:$(length(total[:,it]))")
+            println("DEBUG B:$(length(obs[:,it]))")
+            println("DEBUG C:$(size(total[:,it]))")
+            println("DEBUG D:$(size(obs[:,it][:]))")
+            total[:,it] .+= obs[:,it][:]
         end
     end
     total ./= num_sample
@@ -40,6 +44,10 @@ end
 ave1   = ave(obs_name1,L,num_temps,num_sample,num_meas)
 name1 = split(obs_name1,"_corr")[1]
 out_to_txt(name1,ave1,num_temps,num_meas)
+
+ave2   = ave(obs_name2,L,num_temps,num_sample,num_meas)
+name2 = split(obs_name2,"_corr")[1]
+out_to_txt(name2,ave2,num_temps,num_meas)
 
 
 

@@ -3331,10 +3331,51 @@ begin
 2020年 11月11日 水曜日 14時35分41秒 JST
 end
 2020年 11月11日 水曜日 14時36分18秒 JST
+<<<<<<< HEAD
+Sender: LSF System <lavaadmin@sakura05.local>
+Subject: Job 10092: <test> Done
+
+Job <test> was submitted from host <sakura01.local> by user <kakizawa>.
+Job was executed on host(s) <sakura05.local>, in queue <normal>, as user <kakizawa>.
+</home/kakizawa> was used as the home directory.
+</home/kakizawa/lecture/julia> was used as the working directory.
+Started at Wed Nov 11 15:17:42 2020
+Results reported at Wed Nov 11 15:18:10 2020
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/sh
+#BSUB -n 1
+#BSUB -o test
+#BSUB -J test
+
+export MPIRUN="/usr/share/lava/1.0/linux2.6-glibc2.12-x86_64/bin/intelmpi-mpirun"
+
+date > output
+$MPIRUN -np 1 julia main.jl 2d.ini >> output
+date >> output
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :     20.91 sec.
+
+The output (if any) follows:
+
+=======
 begin
 2020年 11月11日 水曜日 15時11分56秒 JST
 end
 2020年 11月11日 水曜日 15時12分24秒 JST
+<<<<<<< HEAD
+>>>>>>> 693b1d93cb446c7d4ecc5373913c30447d365927
+=======
 begin
 2020年 11月19日 木曜日 16時46分32秒 JST
 end
@@ -3383,6 +3424,9 @@ begin
 2020年 11月27日 金曜日 13時08分45秒 JST
 end
 2020年 11月27日 金曜日 13時09分15秒 JST
+<<<<<<< HEAD
+>>>>>>> 2f896bac71aa293097cbe7f47b40d27bb3e309b9
+=======
 begin
 2020年 11月30日 月曜日 13時27分10秒 JST
 end
@@ -3391,10 +3435,16 @@ begin
 2020年 11月30日 月曜日 13時29分19秒 JST
 end
 2020年 11月30日 月曜日 13時29分51秒 JST
+<<<<<<< HEAD
+>>>>>>> 8589de04b97fc37160a1db435abe72af363037da
+=======
 begin
 2020年 12月 8日 火曜日 14時23分26秒 JST
 end
 2020年 12月 8日 火曜日 14時23分57秒 JST
+<<<<<<< HEAD
+>>>>>>> 9b06e39def8ea28459105fdc14515c78053a8fe8
+=======
 begin
 2020年 12月 8日 火曜日 18時05分04秒 JST
 end
@@ -3423,6 +3473,9 @@ begin
 2020年 12月 8日 火曜日 18時46分55秒 JST
 end
 2020年 12月 8日 火曜日 18時47分28秒 JST
+<<<<<<< HEAD
+>>>>>>> 9cb8fd3c259195110fc96e4ac0e89df10d0fe8f0
+=======
 begin
 2020年 12月11日 金曜日 13時31分48秒 JST
 end
@@ -3439,6 +3492,9 @@ begin
 2020年 12月11日 金曜日 16時36分27秒 JST
 end
 2020年 12月11日 金曜日 16時37分04秒 JST
+<<<<<<< HEAD
+>>>>>>> 49e1c4e999f1b2b35661cf454cb47b68fd709f40
+=======
 begin
 2020年 12月14日 月曜日 13時11分12秒 JST
 end
@@ -3451,6 +3507,9 @@ begin
 2020年 12月14日 月曜日 13時32分41秒 JST
 end
 2020年 12月14日 月曜日 15時02分18秒 JST
+<<<<<<< HEAD
+>>>>>>> 9846cfb8ec986d7689c5fe9100f358695fb8c26d
+=======
 begin
 2020年 12月15日 火曜日 15時24分35秒 JST
 end
@@ -3459,6 +3518,7 @@ begin
 2020年 12月18日 金曜日 14時14分35秒 JST
 end
 2020年 12月18日 金曜日 14時15分03秒 JST
+<<<<<<< HEAD
 begin
 2021年 2月 5日 金曜日 12時57分18秒 JST
 end
@@ -3491,3 +3551,6 @@ begin
 2021年 2月 5日 金曜日 13時09分40秒 JST
 end
 2021年 2月 5日 金曜日 13時10分05秒 JST
+=======
+>>>>>>> e3076a56f5c3a1556f455fb7771b568c9cc5540b
+>>>>>>> ac8d55e4be131e6cba2e63c924a6edab32c6f03e

@@ -48,7 +48,8 @@ function mk_kagome2(L,output_file)
         println(fp,num_sites)
         for i in 1:num_sites
             site = kagome[i]
-            println(fp,i," ",site[1]," ",site[2]," ",site[3])
+            println(fp,site[1]," ",site[2]," ",site[3])
+            #println(fp,i," ",site[1]," ",site[2]," ",site[3])
         end
     end
 

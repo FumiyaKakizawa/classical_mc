@@ -1,109 +1,69 @@
+using PyPlot,LinearAlgebra
 
-using LinearAlgebra
-using PyPlot
+temperature_idx = 1
+L = 3
+num_s = 3*L^2
+kagome_file = "kagome.txt"
+spin_config_file = "spin_config_$(temperature_idx).txt"
 
-
-function read_file(file::String)
-    s = Vector{Tuple{Float64,Float64,Float64}}(undef,0)
+function load_from_file(file,num_s)
+    s = fill((0.,0.,0.),num_s)
     open(file,"r") do fp
-        num_s = parse(Int64,readline(fp))
-        for _ in 1:num_s
-            str = split(readline(fp))
-            idx = parse(Int64,str[1])
-            x   = parse(Float64,str[2])
-            y   = parse(Float64,str[3])
-            z   = parse(Float64,str[4])
-            push!(s,(x,y,z))
-        end
-    end
-    s
-end
-
-kagome = read_file("kagome.txt")
-#println(kagome)
-spins_1  = read_file("spin_config_1.txt")
-#println(spins_1)
-
-function test(s,test_file)
-    num_s = length(s)
-    open(test_file,"w") do fp
-        println(fp,num_s)
+        @assert num_s == parse(Int64, readline(fp))
         for i in 1:num_s
-            println(fp,i," ",s[i][1]," ",s[i][2]," ",s[i][3])
+            str = split(readline(fp))
+            sx = parse(Float64, str[1])
+            sy = parse(Float64, str[2])
+            sz = parse(Float64, str[3])
+            s[i] = (sx,sy,sz)
         end
     end
+    return s
 end
 
-#test(spins_1,"test_spin_config_1.txt")
+kagome = load_from_file(kagome_file,num_s)
+site_pos = [kagome[i] ./ 2 for i in 1:num_s]
 
+# a1 and a2 are lattice vectors.
 function site_to_coord(kagome,a1,a2)
-
-    #(Float64,Float64,Float64)->(Int64,Int64,Int64)
     num_sites = length(kagome)
-    sites = Vector{Tuple{Int64,Int64,Int64}}(undef,num_sites)
-    for is in 1:num_sites
-        sites[is] = Int.(kagome[is])
+    sites = kagome
+    coord = fill((0.,0.,0.),num_sites)
+    for isite in 1:num_sites
+        coord[isite] = kagome[isite][1].* a1 .+ kagome[isite][2].* a2
     end
-    
-    coord = Vector{Tuple{Float64,Float64,Float64}}(undef,num_sites)
-    for is in 1:num_sites
-        temp = sites[is][1].*a1 .+ sites[is].*a2
-        push!(coord,temp)
-    end
-    #println(coord)
-    coord
+    return coord
 end
 
 a1 = (1.0,0.0,0.0)
 a2 = (-1/2,sqrt(3)/2,0.0)
-kagome = site_to_coord(kagome,a1,a2)
-#test(kagome,"test_kagome.txt") #temporary test
+kagome_coord = site_to_coord(site_pos,a1,a2)
 
-function plot_spin_direction(kagome,spins)
+function plot_spin_config(kagome,spins,temperature_idx)
     c = "red"
     lw = 0.5
     ls = :dash
-    
+
     num_sites = length(kagome)
     @assert length(spins) == num_sites
     site_x = [kagome[i][1] for i in 1:num_sites]
     site_y = [kagome[i][2] for i in 1:num_sites]
-    spin_x = [spins[i][2]  for i in 1:num_sites]
+    spin_x = [spins[i][1]  for i in 1:num_sites]
     spin_y = [spins[i][2]  for i in 1:num_sites]
-    
-    PyPlot.quiver(site_x,site_y,spin_x,spin_y,pivot=:middle)
-    
-    for i in 1:length(lattx)
-        for j in 1:length(latty)
-            if i < j && abs(1-norm(lattice[i].-lattice[j])) < 1e-5
-            
-                PyPlot.plot([lattx[i],lattx[j]],[latty[i],latty[j]],color=c)
-                
-            end
+
+    plt.figure()
+    plt.axes().set_aspect("equal")
+    #Plot spin config on a kagome lattice as a vector field.
+    plt.quiver(site_x,site_y,spin_x,spin_y,pivot=:middle)
+
+    for i in 1:length(site_x),j in 1:length(site_x)
+        if i < j && abs(0.5-norm(kagome[i].-kagome[j])) < 1e-2
+            plt.plot([site_x[i],site_x[j]],[site_y[i],site_y[j]],color=c)
         end
     end
-    
+
+    plt.savefig("spin_config_$(temperature_idx)")
 end
-#=
-# pull numerical date from h5 file.
 
-fp = h5open("L9.h5","r") 
-gp = read(fp,"spin_config")
-
-num_spins = gp["num_spins"]
-L = Int(sqrt(num_spins/3))
-
-temp = gp["temp"]
-
-sx = gp["sx"]
-sy = gp["sy"]
-sz = gp["sz"]
-
-kagome = mk_stacked_structure(L,num_stack,lat_vec1,lat_vec2,lat_vec3,num_spins)
-plot_spin_direction(kagome,sx,sy,num_spins)
-PyPlot.title("spin configuration at $(L"T=0.001") and $(L"J_2=0.005")")
-
-savefig("spin_config")
-
-close(fp)
-=#
+spin_config = load_from_file(spin_config_file,num_s)
+plot_spin_config(kagome_coord,spin_config,temperature_idx)

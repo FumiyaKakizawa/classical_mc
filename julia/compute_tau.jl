@@ -109,7 +109,7 @@ function out_to_txt(τs,temperatures)
         end
     end
 end
-out_to_txt(τs,temperatures)
+out_to_txt(τs,temperatures[:])
 
 #=
 [HERE] 21.1.5
