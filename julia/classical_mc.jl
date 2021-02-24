@@ -153,7 +153,7 @@ function write_spin_config(file_name::String,spins)
         println(fp,num_spins)
         for i in 1:num_spins 
             sx,sy,sz = spins[i]
-            println(fp,sx," ",sy," ",sz)
+            println(fp,i," ",sx," ",sy," ",sz)
         end
     end
 
@@ -608,7 +608,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     MPI.Barrier(comm)
   
     for it in 1:num_temps_local
-        #write_spin_config("spin_configs/spin_config$(it+start_idx-1).txt",spins_local[it])
+        write_spin_config("spin_config_$(it+start_idx-1).txt",spins_local[it])
     end
   
 
@@ -621,6 +621,8 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
         add!(acc,"mq_sqrt3_corr",mq_sqrt3_correlation)
         add!(acc,"m_120degs_corr",m_120degs_correlation)
     end
+
+    #add!(acc,spins_local)
 
     # Output time evolution of order parameter.
     #=
