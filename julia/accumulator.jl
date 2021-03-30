@@ -88,7 +88,7 @@ function save_to_hdf5!(acc, h5file, comm)
     for name in keys(acc.data)
         mean_data = mean_gather(acc, name, comm)
         if rank == 0
-            g = g_create(h5file, name)
+            g = create_group(h5file, name)
             #println("Writing $(name)...")
             g["mean"] = to_array(mean_data)
         end

@@ -153,7 +153,7 @@ function write_spin_config(file_name::String,spins)
         println(fp,num_spins)
         for i in 1:num_spins 
             sx,sy,sz = spins[i]
-            println(fp,i," ",sx," ",sy," ",sz)
+            println(fp,sx," ",sy," ",sz)
         end
     end
 

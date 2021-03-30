@@ -2,7 +2,7 @@ num_insert  = 10
 start_temps = 2e-2
 end_temps   = 3e-2
 input_file  = "temperatures.txt"
-output_file = "temperatures.txt"
+output_file = input_file
 
 # Read a list of temperatures
 function read_temps(temperature_file::String)
@@ -25,23 +25,25 @@ function read_temps(temperature_file::String)
 end
 
 
-function insert_temps(num_insert,start_temps,end_temps,input_file,output_file)
-    
+function insert_temps(temperatures,num_insert,start_temps,end_temps)
     insert_temps = LinRange(start_temps,end_temps,num_insert)
-    original_temps = read_temps(input_file)
-    
-    target_temps = union(original_temps, insert_temps)
+    target_temps = union(temperatures, insert_temps)
     sort!(target_temps)
-
-    open(output_file,"w") do fp
-        num_temps    = length(target_temps)
-        println(fp,num_temps)
-        for idx in 1:num_temps
-            println(fp,target_temps[idx])
-        end
-    end
-
+    target_temps
 end
 
 
-insert_temps(num_insert,start_temps,end_temps,input_file,output_file)
+function write_temperatures(temperatures,output_file)
+    num_temps = length(temperatures)
+    open(output_file,"w") do fp
+        println(fp,num_temps)
+        for it in 1:num_temps
+            println(fp," ",temperatures[it])
+        end
+    end
+end
+
+
+temperatures = read_temps(input_file)
+temperatures = insert_temps(temperatures,num_insert,start_temps,end_temps)
+write_temperatures(temperatures,output_file)
