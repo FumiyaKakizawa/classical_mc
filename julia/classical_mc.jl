@@ -339,6 +339,9 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     # Replica exchange
     ex_rex = get_param(Bool, conf, "simulation", "ex_rex", false)
 
+    # For measuring an energy histograms
+    energy_histogram_local = [Float64[] for _ in 1:num_temps_local]
+
     # Non-equilibrium relaxation method.
     if use_neq
         if ex_rex
@@ -470,6 +473,11 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             add!(acc, "loop_found_rate" , loop_found_rate)
             add!(acc, "loop_accept_rate", loop_acc_rate)
           
+            # energy histgrams
+            for it in 1:num_temps_local
+                push!(energy_histogram_local[it],energy_local[it])
+            end
+
             # loop length,candidate order parameter
             measured_loop_length = zeros(Int64,num_temps_local)
             """
@@ -621,6 +629,9 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
         add!(acc,"mq_sqrt3_corr",mq_sqrt3_correlation)
         add!(acc,"m_120degs_corr",m_120degs_correlation)
     end
+ 
+    # To save to HDF5 file,add energy histgrams to accumulator.
+    add!(acc,"energy_histogram",energy_histogram_local)
 
     #add!(acc,spins_local)
 
