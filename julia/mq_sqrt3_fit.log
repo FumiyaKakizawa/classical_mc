@@ -1,0 +1,396 @@
+
+
+*******************************************************************************
+Tue Jan  5 16:30:01 2021
+
+
+FIT:    data read from "tau_Gt.dat"u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+
+Current data point
+=========================
+#               = 1 out of 9
+x               = 0.1            
+z               = 3574.62        
+
+Current set of parameters
+=========================
+a               = 0.1            
+b               = 0.1            
+c               = 0.1            
+
+BREAK: Undefined value during function evaluation
+
+*******************************************************************************
+Tue Jan  5 16:32:11 2021
+
+
+FIT:    data read from "tau_Gt.dat" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.4755841102e+07   0.00e+00  1.36e-02    1.000000e-02   1.000000e-02   1.000000e-02
+BREAK: Singular matrix in Invert_RtR
+
+*******************************************************************************
+Tue Jan  5 16:33:31 2021
+
+
+FIT:    data read from "tau_mq_sqrt3.dat" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 3.7628587554e+06   0.00e+00  1.36e-02    1.000000e-02   1.000000e-02   1.000000e-02
+BREAK: Singular matrix in Invert_RtR
+
+*******************************************************************************
+Tue Jan  5 16:33:48 2021
+
+
+FIT:    data read from "tau_mq_sqrt3.dat" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 3.7628587554e+06   0.00e+00  1.36e-02    1.000000e-02   1.000000e-02   1.000000e-02
+BREAK: Singular matrix in Invert_RtR
+
+*******************************************************************************
+Tue Jan  5 16:34:11 2021
+
+
+FIT:    data read from "tau_afvc.dat" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 2.3681345929e+08   0.00e+00  1.36e-02    1.000000e-02   1.000000e-02   1.000000e-02
+BREAK: Singular matrix in Invert_RtR
+
+*******************************************************************************
+Tue Jan  5 16:34:28 2021
+
+
+FIT:    data read from "tau_fvc.dat" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.7215671142e+00   0.00e+00  1.36e-02    1.000000e-02   1.000000e-02   1.000000e-02
+BREAK: Singular matrix in Invert_RtR
+
+*******************************************************************************
+Tue Jan  5 16:34:56 2021
+
+
+FIT:    data read from "tau_mq_q0.dat" u 1:2
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.7215671142e+00   0.00e+00  1.36e-02    1.000000e-02   1.000000e-02   1.000000e-02
+BREAK: Singular matrix in Invert_RtR
+
+*******************************************************************************
+Tue Jan  5 16:43:15 2021
+
+
+FIT:    data read from "tau_Gt.dat" u 1:(log($2))
+        format = x:z
+        #datapoints = 9
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/(sqrt(x-c))
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.3186317886e+02   0.00e+00  1.36e-02    1.000000e-02   1.000000e-02   1.000000e-02
+ 102 6.5574930133e+01  -9.57e-01  1.36e-01    8.743895e-01   7.674429e-02   1.498502e-01
+
+After 102 iterations the fit converged.
+final sum of squares of residuals : 65.5749
+rel. change during last iteration : -9.56613e-06
+
+degrees of freedom    (FIT_NDF)                        : 6
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 3.30593
+variance of residuals (reduced chisquare) = WSSR/ndf   : 10.9292
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = 0.87439          +/- 2.482        (283.9%)
+b               = 0.0767443        +/- 0.975        (1270%)
+c               = 0.14985          +/- 0.001853     (1.237%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.882  1.000 
+c              -0.874  0.999  1.000 
+
+
+*******************************************************************************
+Mon Feb 15 10:44:42 2021
+
+
+FIT:    data read from "mq_sqrt3_tau.dat" u 1:(log($2))
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/sqrt(x-c)
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.1669585690e+01   0.00e+00  8.79e-01    1.000000e+00   1.000000e+00   1.000000e-01
+ 207 8.0258091665e-05  -9.10e-01  8.79e-03   -6.814734e-01   6.697300e-01   8.387761e-01
+
+After 207 iterations the fit converged.
+final sum of squares of residuals : 8.02581e-05
+rel. change during last iteration : -9.09875e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00895869
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.02581e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = -0.681473        +/- 0.2536       (37.21%)
+b               = 0.66973          +/- 0.0563       (8.406%)
+c               = 0.838776         +/- 0.001144     (0.1364%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.999  1.000 
+c               0.990 -0.995  1.000 
+
+
+*******************************************************************************
+Mon Feb 15 10:45:31 2021
+
+
+FIT:    data read from "mq_sqrt3_tau.dat" u 1:(log($2))
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/sqrt(x-c)
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.1669585690e+01   0.00e+00  8.79e-01    1.000000e+00   1.000000e+00   1.000000e-01
+ 207 8.0258091665e-05  -9.10e-01  8.79e-03   -6.814734e-01   6.697300e-01   8.387761e-01
+
+After 207 iterations the fit converged.
+final sum of squares of residuals : 8.02581e-05
+rel. change during last iteration : -9.09875e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00895869
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.02581e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = -0.681473        +/- 0.2536       (37.21%)
+b               = 0.66973          +/- 0.0563       (8.406%)
+c               = 0.838776         +/- 0.001144     (0.1364%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.999  1.000 
+c               0.990 -0.995  1.000 
+
+
+*******************************************************************************
+Mon Feb 15 10:48:03 2021
+
+
+FIT:    data read from "mq_sqrt3_tau.dat" u 1:(log($2))
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/sqrt(x-c)
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.1669585690e+01   0.00e+00  8.79e-01    1.000000e+00   1.000000e+00   1.000000e-01
+ 207 8.0258091665e-05  -9.10e-01  8.79e-03   -6.814734e-01   6.697300e-01   8.387761e-01
+
+After 207 iterations the fit converged.
+final sum of squares of residuals : 8.02581e-05
+rel. change during last iteration : -9.09875e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00895869
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.02581e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = -0.681473        +/- 0.2536       (37.21%)
+b               = 0.66973          +/- 0.0563       (8.406%)
+c               = 0.838776         +/- 0.001144     (0.1364%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.999  1.000 
+c               0.990 -0.995  1.000 
+
+
+*******************************************************************************
+Mon Feb 15 10:48:31 2021
+
+
+FIT:    data read from "mq_sqrt3_tau.dat" u 1:(log($2))
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/sqrt(x-c)
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.1669585690e+01   0.00e+00  8.79e-01    1.000000e+00   1.000000e+00   1.000000e-01
+ 207 8.0258091665e-05  -9.10e-01  8.79e-03   -6.814734e-01   6.697300e-01   8.387761e-01
+
+After 207 iterations the fit converged.
+final sum of squares of residuals : 8.02581e-05
+rel. change during last iteration : -9.09875e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00895869
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.02581e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = -0.681473        +/- 0.2536       (37.21%)
+b               = 0.66973          +/- 0.0563       (8.406%)
+c               = 0.838776         +/- 0.001144     (0.1364%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.999  1.000 
+c               0.990 -0.995  1.000 
+
+
+*******************************************************************************
+Mon Feb 15 10:49:20 2021
+
+
+FIT:    data read from "mq_sqrt3_tau.dat" u 1:(log($2))
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/sqrt(x-c)
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.1669585690e+01   0.00e+00  8.79e-01    1.000000e+00   1.000000e+00   1.000000e-01
+ 207 8.0258091665e-05  -9.10e-01  8.79e-03   -6.814734e-01   6.697300e-01   8.387761e-01
+
+After 207 iterations the fit converged.
+final sum of squares of residuals : 8.02581e-05
+rel. change during last iteration : -9.09875e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00895869
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.02581e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = -0.681473        +/- 0.2536       (37.21%)
+b               = 0.66973          +/- 0.0563       (8.406%)
+c               = 0.838776         +/- 0.001144     (0.1364%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.999  1.000 
+c               0.990 -0.995  1.000 
+
+
+*******************************************************************************
+Mon Feb 15 10:50:13 2021
+
+
+FIT:    data read from "mq_sqrt3_tau.dat" u 1:(log($2))
+        format = x:z
+        #datapoints = 4
+        residuals are weighted equally (unit weight)
+
+function used for fitting: f(x)
+	f(x) = a + b/sqrt(x-c)
+fitted parameters initialized with current variable values
+
+iter      chisq       delta/lim  lambda   a             b             c            
+   0 1.1669585690e+01   0.00e+00  8.79e-01    1.000000e+00   1.000000e+00   1.000000e-01
+ 207 8.0258091665e-05  -9.10e-01  8.79e-03   -6.814734e-01   6.697300e-01   8.387761e-01
+
+After 207 iterations the fit converged.
+final sum of squares of residuals : 8.02581e-05
+rel. change during last iteration : -9.09875e-06
+
+degrees of freedom    (FIT_NDF)                        : 1
+rms of residuals      (FIT_STDFIT) = sqrt(WSSR/ndf)    : 0.00895869
+variance of residuals (reduced chisquare) = WSSR/ndf   : 8.02581e-05
+
+Final set of parameters            Asymptotic Standard Error
+=======================            ==========================
+a               = -0.681473        +/- 0.2536       (37.21%)
+b               = 0.66973          +/- 0.0563       (8.406%)
+c               = 0.838776         +/- 0.001144     (0.1364%)
+
+correlation matrix of the fit parameters:
+                a      b      c      
+a               1.000 
+b              -0.999  1.000 
+c               0.990 -0.995  1.000 

@@ -1,75 +1,69 @@
+using PyPlot,LinearAlgebra
 
-using LinearAlgebra
-using HDF5
-using PyPlot
+temperature_idx = 1
+L = 3
+num_s = 3*L^2
+kagome_file = "kagome.txt"
+spin_config_file = "spin_config_$(temperature_idx).txt"
 
-# prameters for system.
-num_stack = 1
-
-# lattice vectors
-Type3dVector = Tuple{Float64,Float64,Float64}
-l = 1.
-lat_vec1 = l .* (2.,0.,0.)
-lat_vec2 = l .* (2*cos(pi/3),2*sin(pi/3),0.)
-lat_vec3 = l .* (0.,0.,1.)
-
-function mk_stacked_structure(L::Int64,num_stack::Int64,a1::Type3dVector,a2::Type3dVector,a3::Type3dVector,num_spins::Int64)
-    index = 1
-    temp = fill((0.,0.,0.), num_spins)
-    for layer in 1:num_stack
-        for (i,j) in Iterators.product(1:L,1:L)
-            A = (i-1).* a1 .+ (j-1).*a2 .+ (layer-1).*a3
-            B = A .+ a1./2
-            C = A .+ a2./2
-            temp[index  ] = A
-            temp[index+1] = B
-            temp[index+2] = C
-            index += 3
+function load_from_file(file,num_s)
+    s = fill((0.,0.,0.),num_s)
+    open(file,"r") do fp
+        @assert num_s == parse(Int64, readline(fp))
+        for i in 1:num_s
+            str = split(readline(fp))
+            sx = parse(Float64, str[1])
+            sy = parse(Float64, str[2])
+            sz = parse(Float64, str[3])
+            s[i] = (sx,sy,sz)
         end
     end
-    return temp
+    return s
 end
 
-function plot_spin_direction(lattice::Array{Tuple{Float64,Float64,Float64},1},spins_x::Array{Float64,1},spins_y::Array{Float64,1},num_spins::Int64)
+kagome = load_from_file(kagome_file,num_s)
+site_pos = [kagome[i] ./ 2 for i in 1:num_s]
+
+# a1 and a2 are lattice vectors.
+function site_to_coord(kagome,a1,a2)
+    num_sites = length(kagome)
+    sites = kagome
+    coord = fill((0.,0.,0.),num_sites)
+    for isite in 1:num_sites
+        coord[isite] = kagome[isite][1].* a1 .+ kagome[isite][2].* a2
+    end
+    return coord
+end
+
+a1 = (1.0,0.0,0.0)
+a2 = (-1/2,sqrt(3)/2,0.0)
+kagome_coord = site_to_coord(site_pos,a1,a2)
+
+function plot_spin_config(kagome,spins,temperature_idx)
     c = "red"
     lw = 0.5
     ls = :dash
-    
-    lattx = [lattice[i][1] for i in 1:length(lattice)]
-    latty = [lattice[i][2] for i in 1:length(lattice)]
-    
-    PyPlot.quiver(lattx,latty,spins_x,spins_y,pivot=:middle)
-    
-    for i in 1:length(lattx)
-        for j in 1:length(latty)
-            if i < j && abs(1-norm(lattice[i].-lattice[j])) < 1e-5
-            
-                PyPlot.plot([lattx[i],lattx[j]],[latty[i],latty[j]],color=c)
-                
-            end
+
+    num_sites = length(kagome)
+    @assert length(spins) == num_sites
+    site_x = [kagome[i][1] for i in 1:num_sites]
+    site_y = [kagome[i][2] for i in 1:num_sites]
+    spin_x = [spins[i][1]  for i in 1:num_sites]
+    spin_y = [spins[i][2]  for i in 1:num_sites]
+
+    plt.figure()
+    plt.axes().set_aspect("equal")
+    #Plot spin config on a kagome lattice as a vector field.
+    plt.quiver(site_x,site_y,spin_x,spin_y,pivot=:middle)
+
+    for i in 1:length(site_x),j in 1:length(site_x)
+        if i < j && abs(0.5-norm(kagome[i].-kagome[j])) < 1e-2
+            plt.plot([site_x[i],site_x[j]],[site_y[i],site_y[j]],color=c)
         end
     end
-    
+
+    plt.savefig("spin_config_$(temperature_idx)")
 end
 
-# pull numerical date from h5 file.
-
-fp = h5open("L9.h5","r") 
-gp = read(fp,"spin_config")
-
-num_spins = gp["num_spins"]
-L = Int(sqrt(num_spins/3))
-
-temp = gp["temp"]
-
-sx = gp["sx"]
-sy = gp["sy"]
-sz = gp["sz"]
-
-kagome = mk_stacked_structure(L,num_stack,lat_vec1,lat_vec2,lat_vec3,num_spins)
-plot_spin_direction(kagome,sx,sy,num_spins)
-PyPlot.title("spin configuration at $(L"T=0.001") and $(L"J_2=0.005")")
-
-savefig("spin_config")
-
-close(fp)
+spin_config = load_from_file(spin_config_file,num_s)
+plot_spin_config(kagome_coord,spin_config,temperature_idx)

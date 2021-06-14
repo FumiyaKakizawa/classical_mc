@@ -3518,4 +3518,312 @@ begin
 2020年 12月18日 金曜日 14時14分35秒 JST
 end
 2020年 12月18日 金曜日 14時15分03秒 JST
+<<<<<<< HEAD
+begin
+2021年 2月 5日 金曜日 12時57分18秒 JST
+end
+2021年 2月 5日 金曜日 12時57分59秒 JST
+begin
+2021年 2月 5日 金曜日 12時59分08秒 JST
+end
+2021年 2月 5日 金曜日 12時59分34秒 JST
+begin
+2021年 2月 5日 金曜日 13時00分51秒 JST
+end
+2021年 2月 5日 金曜日 13時00分55秒 JST
+begin
+2021年 2月 5日 金曜日 13時01分26秒 JST
+end
+2021年 2月 5日 金曜日 13時01分30秒 JST
+begin
+2021年 2月 5日 金曜日 13時01分51秒 JST
+end
+2021年 2月 5日 金曜日 13時02分16秒 JST
+begin
+2021年 2月 5日 金曜日 13時07分48秒 JST
+end
+2021年 2月 5日 金曜日 13時07分53秒 JST
+begin
+2021年 2月 5日 金曜日 13時08分43秒 JST
+end
+2021年 2月 5日 金曜日 13時08分47秒 JST
+begin
+2021年 2月 5日 金曜日 13時09分40秒 JST
+end
+2021年 2月 5日 金曜日 13時10分05秒 JST
+=======
 >>>>>>> e3076a56f5c3a1556f455fb7771b568c9cc5540b
+>>>>>>> ac8d55e4be131e6cba2e63c924a6edab32c6f03e
+begin
+2021年 2月27日 土曜日 16時02分12秒 JST
+end
+2021年 2月27日 土曜日 16時02分19秒 JST
+begin
+2021年 2月27日 土曜日 16時15分09秒 JST
+end
+2021年 2月27日 土曜日 16時17分52秒 JST
+begin
+2021年 2月27日 土曜日 16時18分42秒 JST
+end
+2021年 2月27日 土曜日 16時20分21秒 JST
+begin
+2021年 6月14日 月曜日 14時38分06秒 JST
+end
+2021年 6月14日 月曜日 14時38分57秒 JST
+begin
+2021年 6月14日 月曜日 14時39分48秒 JST
+end
+2021年 6月14日 月曜日 14時40分18秒 JST
+begin
+2021年 6月14日 月曜日 14時53分11秒 JST
+end
+2021年 6月14日 月曜日 14時53分42秒 JST
+begin
+2021年 6月14日 月曜日 15時12分59秒 JST
+end
+2021年 6月14日 月曜日 15時13分27秒 JST
+Sender: LSF System <lavaadmin@sakura04.local>
+Subject: Job 11062: <test> Done
+
+Job <test> was submitted from host <sakura01.local> by user <kakizawa>.
+Job was executed on host(s) <sakura04.local>, in queue <normal>, as user <kakizawa>.
+</home/kakizawa> was used as the home directory.
+</home/kakizawa/repos/lecture/julia> was used as the working directory.
+Started at Mon Jun 14 19:30:49 2021
+Results reported at Mon Jun 14 19:31:18 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/sh
+#BSUB -n 1
+#BSUB -o test
+#BSUB -J test
+
+export MPIRUN="/usr/share/lava/1.0/linux2.6-glibc2.12-x86_64/bin/intelmpi-mpirun"
+
+date > output
+$MPIRUN -np 1 julia main.jl 2d.ini 
+date >> output
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :     19.95 sec.
+
+The output (if any) follows:
+
+ERROR: LoadError: UndefVarError: create_group not defined
+Stacktrace:
+ [1] save_to_hdf5!(::Main.ClassicalMC.Accumulator, ::HDF5.HDF5File, ::MPI.Comm) at /misc/home/kakizawa/repos/lecture/julia/accumulator.jl:91
+ [2] solve_(::String, ::MPI.Comm, ::String, ::Int64, ::IOStream) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:752
+ [3] #34 at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:217 [inlined]
+ [4] #open#310(::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::getfield(Main.ClassicalMC, Symbol("##34#35")){String,MPI.Comm,String,Int64}, ::String, ::Vararg{String,N} where N) at ./iostream.jl:369
+ [5] open at ./iostream.jl:367 [inlined]
+ [6] solve(::String, ::MPI.Comm, ::String, ::Int64) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:216
+ [7] top-level scope at util.jl:156
+ [8] top-level scope at /misc/home/kakizawa/repos/lecture/julia/main.jl:46
+ [9] include at ./boot.jl:326 [inlined]
+ [10] include_relative(::Module, ::String) at ./loading.jl:1038
+ [11] include(::Module, ::String) at ./sysimg.jl:29
+ [12] exec_options(::Base.JLOptions) at ./client.jl:267
+ [13] _start() at ./client.jl:436
+in expression starting at /misc/home/kakizawa/repos/lecture/julia/main.jl:45
+Sender: LSF System <lavaadmin@sakura04.local>
+Subject: Job 11063: <test> Done
+
+Job <test> was submitted from host <sakura01.local> by user <kakizawa>.
+Job was executed on host(s) <sakura04.local>, in queue <normal>, as user <kakizawa>.
+</home/kakizawa> was used as the home directory.
+</home/kakizawa/repos/lecture/julia> was used as the working directory.
+Started at Mon Jun 14 19:38:49 2021
+Results reported at Mon Jun 14 19:39:17 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/sh
+#BSUB -n 1
+#BSUB -o test
+#BSUB -J test
+
+export MPIRUN="/usr/share/lava/1.0/linux2.6-glibc2.12-x86_64/bin/intelmpi-mpirun"
+
+date > output
+$MPIRUN -np 1 julia main.jl 2d.ini 
+date >> output
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :     19.87 sec.
+
+The output (if any) follows:
+
+ERROR: LoadError: UndefVarError: create_group not defined
+Stacktrace:
+ [1] save_to_hdf5!(::Main.ClassicalMC.Accumulator, ::HDF5.HDF5File, ::MPI.Comm) at /misc/home/kakizawa/repos/lecture/julia/accumulator.jl:91
+ [2] solve_(::String, ::MPI.Comm, ::String, ::Int64, ::IOStream) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:752
+ [3] #34 at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:217 [inlined]
+ [4] #open#310(::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::getfield(Main.ClassicalMC, Symbol("##34#35")){String,MPI.Comm,String,Int64}, ::String, ::Vararg{String,N} where N) at ./iostream.jl:369
+ [5] open at ./iostream.jl:367 [inlined]
+ [6] solve(::String, ::MPI.Comm, ::String, ::Int64) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:216
+ [7] top-level scope at util.jl:156
+ [8] top-level scope at /misc/home/kakizawa/repos/lecture/julia/main.jl:46
+ [9] include at ./boot.jl:326 [inlined]
+ [10] include_relative(::Module, ::String) at ./loading.jl:1038
+ [11] include(::Module, ::String) at ./sysimg.jl:29
+ [12] exec_options(::Base.JLOptions) at ./client.jl:267
+ [13] _start() at ./client.jl:436
+in expression starting at /misc/home/kakizawa/repos/lecture/julia/main.jl:45
+Sender: LSF System <lavaadmin@sakura04.local>
+Subject: Job 11064: <test> Done
+
+Job <test> was submitted from host <sakura01.local> by user <kakizawa>.
+Job was executed on host(s) <sakura04.local>, in queue <normal>, as user <kakizawa>.
+</home/kakizawa> was used as the home directory.
+</home/kakizawa/repos/lecture/julia> was used as the working directory.
+Started at Mon Jun 14 19:41:49 2021
+Results reported at Mon Jun 14 19:42:12 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/sh
+#BSUB -n 1
+#BSUB -o test
+#BSUB -J test
+
+export MPIRUN="/usr/share/lava/1.0/linux2.6-glibc2.12-x86_64/bin/intelmpi-mpirun"
+
+date > output
+$MPIRUN -np 1 julia main.jl 2d.ini 
+date >> output
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :     19.64 sec.
+
+The output (if any) follows:
+
+ERROR: LoadError: UndefVarError: create_group not defined
+Stacktrace:
+ [1] save_to_hdf5!(::Main.ClassicalMC.Accumulator, ::HDF5.HDF5File, ::MPI.Comm) at /misc/home/kakizawa/repos/lecture/julia/accumulator.jl:91
+ [2] solve_(::String, ::MPI.Comm, ::String, ::Int64, ::IOStream) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:752
+ [3] #34 at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:217 [inlined]
+ [4] #open#310(::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::getfield(Main.ClassicalMC, Symbol("##34#35")){String,MPI.Comm,String,Int64}, ::String, ::Vararg{String,N} where N) at ./iostream.jl:369
+ [5] open at ./iostream.jl:367 [inlined]
+ [6] solve(::String, ::MPI.Comm, ::String, ::Int64) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:216
+ [7] top-level scope at util.jl:156
+ [8] top-level scope at /misc/home/kakizawa/repos/lecture/julia/main.jl:46
+ [9] include at ./boot.jl:326 [inlined]
+ [10] include_relative(::Module, ::String) at ./loading.jl:1038
+ [11] include(::Module, ::String) at ./sysimg.jl:29
+ [12] exec_options(::Base.JLOptions) at ./client.jl:267
+ [13] _start() at ./client.jl:436
+in expression starting at /misc/home/kakizawa/repos/lecture/julia/main.jl:45
+Sender: LSF System <lavaadmin@sakura04.local>
+Subject: Job 11065: <test> Done
+
+Job <test> was submitted from host <sakura01.local> by user <kakizawa>.
+Job was executed on host(s) <sakura04.local>, in queue <normal>, as user <kakizawa>.
+</home/kakizawa> was used as the home directory.
+</home/kakizawa/repos/lecture/julia> was used as the working directory.
+Started at Mon Jun 14 19:45:39 2021
+Results reported at Mon Jun 14 19:46:03 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/sh
+#BSUB -n 1
+#BSUB -o test
+#BSUB -J test
+
+export MPIRUN="/usr/share/lava/1.0/linux2.6-glibc2.12-x86_64/bin/intelmpi-mpirun"
+
+date > output
+$MPIRUN -np 1 julia main.jl 2d.ini 
+date >> output
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :     19.70 sec.
+
+The output (if any) follows:
+
+ERROR: LoadError: UndefVarError: create_group not defined
+Stacktrace:
+ [1] save_to_hdf5!(::Main.ClassicalMC.Accumulator, ::HDF5.HDF5File, ::MPI.Comm) at /misc/home/kakizawa/repos/lecture/julia/accumulator.jl:92
+ [2] solve_(::String, ::MPI.Comm, ::String, ::Int64, ::IOStream) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:752
+ [3] #34 at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:217 [inlined]
+ [4] #open#310(::Base.Iterators.Pairs{Union{},Union{},Tuple{},NamedTuple{(),Tuple{}}}, ::Function, ::getfield(Main.ClassicalMC, Symbol("##34#35")){String,MPI.Comm,String,Int64}, ::String, ::Vararg{String,N} where N) at ./iostream.jl:369
+ [5] open at ./iostream.jl:367 [inlined]
+ [6] solve(::String, ::MPI.Comm, ::String, ::Int64) at /misc/home/kakizawa/repos/lecture/julia/classical_mc.jl:216
+ [7] top-level scope at util.jl:156
+ [8] top-level scope at /misc/home/kakizawa/repos/lecture/julia/main.jl:46
+ [9] include at ./boot.jl:326 [inlined]
+ [10] include_relative(::Module, ::String) at ./loading.jl:1038
+ [11] include(::Module, ::String) at ./sysimg.jl:29
+ [12] exec_options(::Base.JLOptions) at ./client.jl:267
+ [13] _start() at ./client.jl:436
+in expression starting at /misc/home/kakizawa/repos/lecture/julia/main.jl:45
+Sender: LSF System <lavaadmin@sakura04.local>
+Subject: Job 11066: <test> Done
+
+Job <test> was submitted from host <sakura01.local> by user <kakizawa>.
+Job was executed on host(s) <sakura04.local>, in queue <normal>, as user <kakizawa>.
+</home/kakizawa> was used as the home directory.
+</home/kakizawa/repos/lecture/julia> was used as the working directory.
+Started at Mon Jun 14 19:50:59 2021
+Results reported at Mon Jun 14 19:51:22 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/sh
+#BSUB -n 1
+#BSUB -o test
+#BSUB -J test
+
+export MPIRUN="/usr/share/lava/1.0/linux2.6-glibc2.12-x86_64/bin/intelmpi-mpirun"
+
+date > output
+$MPIRUN -np 1 julia main.jl 2d.ini 
+date >> output
+
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time   :     18.83 sec.
+
+The output (if any) follows:
+
+  9.677155 seconds (26.19 M allocations: 1.274 GiB, 6.98% gc time)

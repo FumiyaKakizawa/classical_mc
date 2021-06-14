@@ -25,23 +25,39 @@ function read_temps(temperature_file::String)
 end
 
 
+<<<<<<< HEAD
 function insert_temps(temperatures,num_insert,start_temps,end_temps,input_file,output_file)
     
     original_temps = temperatures
     insert_temps = LinRange(start_temps,end_temps,num_insert)
     
     target_temps = union(original_temps, insert_temps)
+=======
+function insert_temps(temperatures,num_insert,start_temps,end_temps)
+    insert_temps = LinRange(start_temps,end_temps,num_insert)
+    target_temps = union(temperatures, insert_temps)
+>>>>>>> ac82c1c9494af084fc652f36a0a5559b344624b9
     sort!(target_temps)
-
-    open(output_file,"w") do fp
-        num_temps    = length(target_temps)
-        println(fp,num_temps)
-        for idx in 1:num_temps
-            println(fp,target_temps[idx])
-        end
-    end
-
+    target_temps
 end
 
+
+function write_temperatures(temperatures,output_file)
+    num_temps = length(temperatures)
+    open(output_file,"w") do fp
+        println(fp,num_temps)
+        for it in 1:num_temps
+            println(fp," ",temperatures[it])
+        end
+    end
+end
+
+<<<<<<< HEAD
 temperatures = read_temps(input_file)
 insert_temps(num_insert,start_temps,end_temps,input_file,output_file)
+=======
+
+temperatures = read_temps(input_file)
+temperatures = insert_temps(temperatures,num_insert,start_temps,end_temps)
+write_temperatures(temperatures,output_file)
+>>>>>>> ac82c1c9494af084fc652f36a0a5559b344624b9

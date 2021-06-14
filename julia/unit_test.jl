@@ -2,13 +2,27 @@ using Test
 
 include("measure_mc.jl")
 include("loop_update_tests.jl")
-include("compute_tau.jl")
-
+#include("compute_tau.jl")
+include("insert_temperatures.jl")
 println("unit test results")
 
-function x_model(num_spins)
+function test_insert_temperatures()
+    temperatures = [0.1,1.0]
+    num_insert   = 10
+    start_temps  = temperatures[1]
+    end_temps    = temperatures[2]
+    test_temps   = insert_temps(temperatures,num_insert,start_temps,end_temps)
+    target_temps = LinRange(0.1,1.0,10)
 
-    return [fill((1.,0.,0.),num_spins)]
+    @test length(test_temps) == length(target_temps)
+    @test all(test_temps .== target_temps)
+
+end
+
+test_insert_temperatures()
+
+function x_model(num_spins)
+    [fill((1.,0.,0.),num_spins)]
 end
 
 function random_model(num_spins)    
@@ -96,7 +110,7 @@ function test_compute_τ()
     
     @test τ ≈ test_pdata[2]
 end
-test_compute_τ()
+#test_compute_τ()
 
 #= 
 [HERE] 21.1.5
@@ -117,7 +131,7 @@ function test_compute_Tc()
     @test Tc ≈ test_pdata[3]
 
 end
-test_compute_Tc()
+#test_compute_Tc()
 
 #=
 [HERE] 21.1.5
@@ -285,7 +299,7 @@ function test_compute_vector_chirality(L)
     #@test isapprox(ferro_vc,sqrt3_ferro) 
     @test isapprox(af_vc,sqrt3_af)
     
-    ferro_vc2, af_vc2, vc_corr = compute_vector_chiralities(sqrt3_new,utriangles,dtriangles)
+    ferro_vc2, af_vc2 = compute_vector_chiralities(sqrt3_new,utriangles,dtriangles)
 
     @test isapprox(ferro_vc, ferro_vc2, rtol=0.0, atol=1e-8)
     @test isapprox(af_vc, af_vc2, rtol=0.0, atol=1e-8)
