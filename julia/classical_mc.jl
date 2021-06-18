@@ -153,7 +153,7 @@ function write_spin_config(file_name::String,spins)
         println(fp,num_spins)
         for i in 1:num_spins 
             sx,sy,sz = spins[i]
-            println(fp,i," ",sx," ",sy," ",sz)
+            println(fp,sx," ",sy," ",sz)
         end
     end
 
@@ -589,7 +589,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     T2_op = mean_gather(acc, "T_op_2", comm)
     m2q_q0 = mean_gather(acc, "mq0_2", comm)
     m2q_sqrt3 = mean_gather(acc, "msqrt_2", comm)
-    m120degs = mean_gather(acc, "m120degs_2", comm)
+    m120degs2 = mean_gather(acc, "m120degs_2", comm)
     Ferro_vc2 = mean_gather(acc, "Ferro_vc_2", comm)
     AF_vc2    = mean_gather(acc, "AF_vc_2"   , comm)
     m4_af = mean_gather(acc, "m_af_4", comm)
@@ -711,7 +711,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             println(outf, "AF_vc2: $(rex.temps[i]) $(AF_vc2[i])")
             println(outf, "m2q0: $(rex.temps[i]) $(m2q_q0[i])")
             println(outf, "m2_sqrt3: $(rex.temps[i]) $(m2q_sqrt3[i])")
-            println(outf, "m120degs: $(rex.temps[i]) $(m120degs[i])")
+            println(outf, "m120degs2: $(rex.temps[i]) $(m120degs2[i])")
             println(outf, "af4: $(rex.temps[i]) $(m4_af[i])")
             println(outf, "op4: $(rex.temps[i]) $(T4_op[i])")
             println(outf, "Ferro_vc4: $(rex.temps[i]) $(Ferro_vc4[i])")

@@ -1,0 +1,30 @@
+ERROR: LoadError: LoadError: LoadError: ArgumentError: Package MPI not found in current path:
+- Run `import Pkg; Pkg.add("MPI")` to install the MPI package.
+
+Stacktrace:
+ [1] require(into::Module, mod::Symbol)
+   @ Base ./loading.jl:871
+ [2] include(mod::Module, _path::String)
+   @ Base ./Base.jl:386
+ [3] include(x::String)
+   @ Main.ClassicalMC ~/repos/classical_mc/julia/classical_mc.jl:1
+ [4] top-level scope
+   @ ~/repos/classical_mc/julia/classical_mc.jl:6
+ [5] include(fname::String)
+   @ Base.MainInclude ./client.jl:444
+ [6] top-level scope
+   @ ~/repos/classical_mc/julia/main.jl:1
+in expression starting at /home/kakizawa/repos/classical_mc/julia/accumulator.jl:1
+in expression starting at /home/kakizawa/repos/classical_mc/julia/classical_mc.jl:1
+in expression starting at /home/kakizawa/repos/classical_mc/julia/main.jl:1
+--------------------------------------------------------------------------
+Primary job  terminated normally, but 1 process returned
+a non-zero exit code. Per user-direction, the job has been aborted.
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+mpirun detected that one or more processes exited with non-zero status, thus causing
+the job to be terminated. The first process to do so was:
+
+  Process name: [[19059,1],0]
+  Exit code:    1
+--------------------------------------------------------------------------
