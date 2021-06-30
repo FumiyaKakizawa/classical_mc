@@ -1,6 +1,7 @@
 using MPI
 using Test
 using EllipsisNotation
+using HDF5
 
 struct Accumulator
     count::Dict{String,UInt64}
@@ -89,6 +90,7 @@ function save_to_hdf5!(acc, h5file, comm)
         mean_data = mean_gather(acc, name, comm)
         if rank == 0
             g = create_group(h5file, name)
+            #g = g_create(h5file, name)
             #println("Writing $(name)...")
             g["mean"] = to_array(mean_data)
         end
