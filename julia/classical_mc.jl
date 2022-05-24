@@ -339,8 +339,11 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     # Replica exchange
     ex_rex = get_param(Bool, conf, "simulation", "ex_rex", false)
 
-    # For measuring an energy histograms
+    # For measuring an energy histogram
     energy_histogram_local = [Float64[] for _ in 1:num_temps_local]
+
+    # For measuring a loop length histogram
+    loop_length_histogram_local = [Float64[] for _ in 1:num_temps_local]
 
     # Non-equilibrium relaxation method.
     if use_neq
@@ -480,19 +483,29 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
 
             # loop length,candidate order parameter
             measured_loop_length = zeros(Int64,num_temps_local)
-            """
-            for it in 1:num_temps_local 
+            for it in 1:num_temps_local
+                long_loop_counter = 0 
                 measured_loop_length[it] = compute_loop_length(spins_local[it],
                                                                updater,
                                                                loop_updater,
                                                                max_loop_length,
                                                                false)
+                L = sqrt(num_spins/3)
+                # diagonal length of the system = 2*sqrt(2)*L 
+                if measured_loop_length[it] > 10*2*sqrt(2)*L && long_loop_counter < 10
+                    long_loop_counter += 1
+                    write_spins_on_loop("spin_index_$(it+start_idx-1)_$(long_loop_counter).txt",loop_updater)
+                    write_spin_config("spin_config_$(it+start_idx-1)_w_long_loop_$(long_loop_counter).txt",spins_local[it])
+                end
+
+                push!(loop_length_histogram_local[it],measured_loop_length[it])
+
             end
  
             if !in(0,measured_loop_length)
                 add!(acc,"loop_length",measured_loop_length)
             end
-            """
+            
             add!(acc,"loop_length",measured_loop_length)
 
             # square and fourth power of magnetic and chirality order parameters
@@ -632,6 +645,9 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
  
     # To save to HDF5 file,add energy histgrams to accumulator.
     add!(acc,"energy_histogram",energy_histogram_local)
+
+    # To save to HDF5 file,add loop length histgrams to accumulator.
+    add!(acc,"loop_length_histogram",loop_length_histogram_local)
 
     #add!(acc,spins_local)
 

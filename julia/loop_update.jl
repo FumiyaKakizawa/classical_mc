@@ -18,6 +18,17 @@ function LoopUpdater{T}(num_spins::Int64, max_loop_length::Int64) where T
     return LoopUpdater{T}(num_spins,work, spins_on_loop, new_spins)
 end
 
+function write_spins_on_loop(file_name,loop_updater::LoopUpdater)
+
+    spins_on_loop = loop_updater.spins_on_loop
+    loop_length = length(spins_on_loop)
+    open(file_name,"w") do fp
+        println(fp,loop_length)
+        for i_sol in spins_on_loop
+            println(fp,i_sol)
+        end
+    end
+end
 
 # rewrite based on Sec.3,B of Stefan Schnabel and David P. Landau(2012)
 function find_loop(spins,
