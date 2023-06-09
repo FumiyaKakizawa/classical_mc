@@ -124,12 +124,19 @@ function compute_vector_chirality(spins::AbstractArray{Float64,2},
     return vc / num_spins
 end
 
-function compute_all_vector_chiralities(spins::AbstractArray{Float64,2},
-                                  triangles)
+function compute_all_vector_chiralities(vc::Vector{Float64}, 
+                                        spins::AbstractArray{Float64,2},
+                                        triangles
+                                        )
     num_spins = size(spins)[2]
     num_triangles = length(triangles)
-    vc = zeros(Float64, num_triangles)
-    @assert num_spins == 3num_triangles
+    @assert 3 * length(vc) == num_spins == 3 * num_triangles 
+
+    # initialize 
+    for i in eachindex(vc)
+        vc[i] = 0.0
+    end
+
     for it in eachindex(triangles)
         i = triangles[it]
         for j in 1:3
@@ -138,17 +145,22 @@ function compute_all_vector_chiralities(spins::AbstractArray{Float64,2},
             vc[it] += mycross(s1, s2)
         end
     end
-    vc
+
+    return vc
 end
 
-function compute_vector_chiralities(spins::AbstractArray{Float64,2}, utriangles, dtriangles)
+function compute_vector_chiralities(vc::Vector{Float64},
+                                    spins::AbstractArray{Float64,2},
+                                    utriangles, 
+                                    dtriangles
+                                    )
     @assert length(utriangles) == length(dtriangles)
     num_spins = size(spins)[2]
-    uc_all = compute_all_vector_chiralities(spins, utriangles)
-    dc_all = compute_all_vector_chiralities(spins, dtriangles)
+    uc_all = compute_all_vector_chiralities(vc, spins, utriangles)
+    dc_all = compute_all_vector_chiralities(vc, spins, dtriangles)
     uc, dc = sum(uc_all)/num_spins, sum(dc_all)/num_spins
 #    (uc+dc)^2/3, (uc-dc)^2/3, uc_all[1] * [uc_all; dc_all]
-    (uc+dc)^2 / 3, (uc-dc)^2 / 3 
+    (uc + dc)^2 / 3, (uc - dc)^2 / 3 
 end
 
 function compute_ferro_vector_chirality(spins::AbstractArray{Float64,2}, utriangles, dtriangles)

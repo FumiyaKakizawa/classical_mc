@@ -1,0 +1,24 @@
+
+メモリアロケーションの見積
+
+6/8
+
+100 MC steps, 100 measurementの計算。経過時間=18 hours
+JOBID 4232
+/home/kakizawa/kagome_xy/performance_test/noneq/L1800_100steps
+
+1000回の計測換算で50GB食う(1プロセス)
+ohtakaのパーティションはすべて1ノード当たり230GBのメモリ制限
+→ 温度点が5点以上あると落ちる！
+
+/home/kakizawa/repos/classical_mc/julia/classical_mc.jl.2113408.mem
+/home/kakizawa/repos/classical_mc/julia/measure_mc.jl.2113408.mem
+
+カイラリティの計算コードを破壊的演算に変更
+JOBID 4245
+/home/kakizawa/kagome_xy/performance_test/noneq/L1800_100steps 6/9 10:00 終了予定
+
+ついでにループ長を測定するコードをコメントアウトした計算も流しておく。
+JOBID 4246
+/home/kakizawa/kagome_xy/performance_test/noneq/L1800_100steps_wo_loopmeasure 6/9 10:00 終了予定
+

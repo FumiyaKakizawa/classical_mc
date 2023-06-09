@@ -3,6 +3,7 @@ using .ClassicalMC
 
 using MPI
 using ArgParse
+using Profile
 
 s = ArgParseSettings()
 @add_arg_table! s begin
@@ -43,9 +44,9 @@ end
 
 big_prime_num = 3571
 if rank == 0
-    @time solve(args["input"], mycomm, prefix, rank*big_prime_num)
+    @time solve(args["input"], mycomm, prefix, rank * big_prime_num)
 else
-    solve(args["input"], mycomm, prefix, rank*big_prime_num)
+    solve(args["input"], mycomm, prefix, rank * big_prime_num)
 end
 
 MPI.Finalize()

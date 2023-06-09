@@ -256,8 +256,8 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
 
     # For loop updates
     loop_num_trial  = parse(Int64, retrieve(conf, "loop_update", "num_trial"))
-    max_loop_length  = parse(Int64, retrieve(conf, "loop_update", "max_loop_length"))
-    loop_interval  = get_param(Int64, conf, "loop_update", "interval", 10)
+    max_loop_length = parse(Int64, retrieve(conf, "loop_update", "max_loop_length"))
+    loop_interval   = get_param(Int64, conf, "loop_update", "interval", 10)
 
     # Read a list of temperatures
     temps = read_temps(temperature_file)
@@ -288,7 +288,6 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     # Create accumulator for collecting stat for every process
     acc_proc = Accumulator(1)
 
-
     # Init spins
     spins_local = [fill((1.,0.,0.),num_spins) for _ in 1:num_temps_local]
 
@@ -314,8 +313,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     # preoaration for computation of magnetic order parameter mq
     kagome = mk_kagome(Int(sqrt(num_spins/3)))
     site_pos = [kagome[i] ./ 2 for i in 1:num_spins]
-    qs   = [(0.0,0.0),(π/3,π/3)]
-
+    qs   = [(0.0, 0.0), (π/3, π/3)]
 
     energy_local = [compute_energy(model, spins_local[it]) for it in 1:num_temps_local]
     energy_local = [compute_energy(model, spins_local[it]) for it in 1:num_temps_local]
@@ -345,6 +343,9 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     # For measuring a loop length histogram
     loop_length_histogram_local = [Float64[] for _ in 1:num_temps_local]
 
+    # For measuring vector spin chiralities
+    vc = zeros(Float64, length(upward_triangles)) 
+
     # Non-equilibrium relaxation method.
     if use_neq
         if ex_rex
@@ -360,15 +361,15 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
         init_spins_local = [copy(s) for s in spins_local]
 
         # initial value of Ferro and AF vector spin chirality.
-        init_fvc        = zeros(Float64,num_temps_local)
-        init_afvc       = zeros(Float64,num_temps_local)
-        init_mq_q0      = zeros(Float64,num_temps_local)
-        init_mq_sqrt3   = zeros(Float64,num_temps_local)
-        init_m_120degs  = zeros(Float64,num_temps_local)
+        init_fvc        = zeros(Float64, num_temps_local)
+        init_afvc       = zeros(Float64, num_temps_local)
+        init_mq_q0      = zeros(Float64, num_temps_local)
+        init_mq_sqrt3   = zeros(Float64, num_temps_local)
+        init_m_120degs  = zeros(Float64, num_temps_local)
         for it in 1:num_temps_local
-            init_fvc[it], init_afvc[it] = compute_vector_chiralities(spins_array[it],upward_triangles,downward_triangles) 
-            init_mq_q0[it]    = compute_mq((0.,0.),site_pos,spins_local[it],upward_triangles)
-            init_mq_sqrt3[it] = compute_mq((1/3,1/3),site_pos,spins_local[it],upward_triangles)
+            init_fvc[it], init_afvc[it] = compute_vector_chiralities(vc, spins_array[it], upward_triangles, downward_triangles) 
+            init_mq_q0[it]    = compute_mq((0.,0.),   site_pos,spins_local[it], upward_triangles)
+            init_mq_sqrt3[it] = compute_mq((1/3,1/3), site_pos,spins_local[it], upward_triangles)
             init_m_120degs[it] = compute_m_120degrees(spins_local[it])
         end
         init_mq_sqrt3 .*= 2 #max value of order parameter for √3×√3 is 0.5
@@ -380,25 +381,27 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
         mq_sqrt3_correlation  = [Float64[] for _ in 1:num_temps_local]
         m_120degs_correlation = [Float64[] for _ in 1:num_temps_local]
         for it in 1:num_temps_local
-            tmp = sum([dot(spins_local[it][i],spins_local[it][i]) for i in 1:num_spins])
+            tmp = sum([dot(spins_local[it][i], spins_local[it][i]) for i in 1:num_spins])
             push!(correlation_func[it],tmp / num_spins)
         
-            temp_fvc, temp_afvc  = compute_vector_chiralities(spins_array[it],upward_triangles,downward_triangles) 
-            push!(fvc_correlation[it], init_fvc[it]*temp_fvc)
-            push!(afvc_correlation[it], init_afvc[it]*temp_afvc)
+            temp_fvc, temp_afvc  = compute_vector_chiralities(vc, spins_array[it], upward_triangles, downward_triangles) 
+            push!(fvc_correlation[it],  init_fvc[it]  * temp_fvc)
+            push!(afvc_correlation[it], init_afvc[it] * temp_afvc)
 
-            temp_mq_q0     = compute_mq((0.,0.),site_pos,spins_local[it],upward_triangles)
-            temp_mq_sqrt3  = compute_mq((1/3,1/3),site_pos,spins_local[it],upward_triangles)
+            temp_mq_q0     = compute_mq((0.,0.),   site_pos,spins_local[it], upward_triangles)
+            temp_mq_sqrt3  = compute_mq((1/3,1/3), site_pos,spins_local[it], upward_triangles)
             temp_m_120degs = compute_m_120degrees(spins_local[it])
-            push!(mq_q0_correlation[it],init_mq_q0[it]*temp_mq_q0)
-            push!(mq_sqrt3_correlation[it],init_mq_sqrt3[it]*2temp_mq_sqrt3)
-            push!(m_120degs_correlation[it],init_m_120degs[it]*temp_m_120degs)
+            push!(mq_q0_correlation[it],     init_mq_q0[it]     * temp_mq_q0)
+            push!(mq_sqrt3_correlation[it],  init_mq_sqrt3[it]  * 2 * temp_mq_sqrt3)
+            push!(m_120degs_correlation[it], init_m_120degs[it] * temp_m_120degs)
         end
 
-        maf_time_evo = [[] for it in 1:num_temps_local]
+        #=
+        maf_time_evo = [Float64[] for _ in 1:num_temps_local]
         for it in 1:num_temps_local
-            push!(maf_time_evo[it],compute_m2_af(spins_local[it],upward_triangles))
+            push!(maf_time_evo[it], compute_m2_af(spins_local[it], upward_triangles))
         end
+        =#
     end
 
 
@@ -410,7 +413,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             flush(stdout)
         end
 
-        elpsCPUtime = []
+        elpsCPUtime = Float64[]
  
         # Single spin flips
         ts_start = CPUtime_us()
@@ -482,7 +485,8 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             end
 
             # loop length,candidate order parameter
-            measured_loop_length = zeros(Int64,num_temps_local)
+            measured_loop_length = zeros(Int64, num_temps_local)
+            #=
             for it in 1:num_temps_local
                 long_loop_counter = 0 
                 measured_loop_length[it] = compute_loop_length(spins_local[it],
@@ -492,17 +496,18 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
                                                                false)
                 L = sqrt(num_spins/3)
                 # diagonal length of the system = 2*sqrt(2)*L 
-                if measured_loop_length[it] > 10*2*sqrt(2)*L && long_loop_counter < 10
+                if measured_loop_length[it] > 10 * 2 * sqrt(2) * L && long_loop_counter < 10
                     long_loop_counter += 1
                     write_spins_on_loop("spin_index_$(it+start_idx-1)_$(long_loop_counter).txt",loop_updater)
                     write_spin_config("spin_config_$(it+start_idx-1)_w_long_loop_$(long_loop_counter).txt",spins_local[it])
                 end
 
-                push!(loop_length_histogram_local[it],measured_loop_length[it])
+                push!(loop_length_histogram_local[it], measured_loop_length[it])
 
             end
- 
-            if !in(0,measured_loop_length)
+            =# 
+
+            if !in(0, measured_loop_length)
                 add!(acc,"loop_length",measured_loop_length)
             end
             
@@ -512,22 +517,22 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             m2_af = zeros(Float64,num_temps_local)
             T2_op = zeros(Float64,num_temps_local)
             for it in 1:num_temps_local
-                m2_af[it] = compute_m2_af(spins_local[it],upward_triangles)
-                T2_op[it] = compute_T2_op(spins_local[it],num_spins)
+                m2_af[it] = compute_m2_af(spins_local[it], upward_triangles)
+                T2_op[it] = compute_T2_op(spins_local[it], num_spins)
             end
             add!(acc, "m_af_2", m2_af)
             add!(acc, "T_op_2", T2_op)
             add!(acc, "m_af_4", m2_af.^2)
             add!(acc, "T_op_4", T2_op.^2)
 
-            mq_q0     = zeros(Float64,num_temps_local)
-            mq_sqrt3  = zeros(Float64,num_temps_local)
-            m_120degs = zeros(Float64,num_temps_local)
+            mq_q0     = zeros(Float64, num_temps_local)
+            mq_sqrt3  = zeros(Float64, num_temps_local)
+            m_120degs = zeros(Float64, num_temps_local)
             #ss        = [zeros(Float64,3,num_spins) for _ in 1:num_temps_local]
             #sisj      = Vector{Array{Float64,3}}(undef, num_temps_local)
             for it in 1:num_temps_local
-                mq_q0[it]    = compute_mq((0.,0.),site_pos,spins_local[it],upward_triangles)
-                mq_sqrt3[it] = compute_mq((1/3,1/3),site_pos,spins_local[it],upward_triangles)
+                mq_q0[it]    = compute_mq((0.,0.),   site_pos,spins_local[it], upward_triangles)
+                mq_sqrt3[it] = compute_mq((1/3,1/3), site_pos,spins_local[it], upward_triangles)
                 m_120degs[it]= compute_m_120degrees(spins_local[it])
                 #=
                 sisj[it] = compute_sisj(num_src_triangles_sisj, spins_local[it], upward_triangles)
@@ -537,54 +542,55 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
                     #ss[it][j,is] = spins_local[it][is]⋅spins_local[it][temp_idx]
                 #end
             end
-            add!(acc,"mq0_2",mq_q0)
-            add!(acc,"msqrt_2",mq_sqrt3)
-            add!(acc,"m120degs_2",m_120degs)
-            add!(acc,"mq0_4",mq_q0.^2)
-            add!(acc,"msqrt_4",mq_sqrt3.^2)
-            add!(acc,"m120degs_4",m_120degs.^2)
+            add!(acc, "mq0_2",      mq_q0)
+            add!(acc, "msqrt_2",    mq_sqrt3)
+            add!(acc, "m120degs_2", m_120degs)
+            add!(acc, "mq0_4",      mq_q0.^2)
+            add!(acc, "msqrt_4",    mq_sqrt3.^2)
+            add!(acc, "m120degs_4", m_120degs.^2)
             #add!(acc,"ss",ss)
             #add!(acc,"sisj", sisj)
 
             # ferro and anti-ferro vector spin chirality
-            fvc  = zeros(Float64,num_temps_local)
-            afvc = zeros(Float64,num_temps_local)
+            fvc  = zeros(Float64, num_temps_local)
+            afvc = zeros(Float64, num_temps_local)
             vc_corrs = Vector{Float64}[]
             for it in 1:num_temps_local
-                fvc[it], afvc[it] = compute_vector_chiralities(spins_array[it],upward_triangles,downward_triangles)
+                fvc[it], afvc[it] = compute_vector_chiralities(vc, spins_array[it], upward_triangles, downward_triangles)
                 #push!(vc_corrs, vc_corr)
             end
-            add!(acc,"Ferro_vc_2",fvc)
-            add!(acc,"AF_vc_2",afvc)
-            add!(acc,"Ferro_vc_4",fvc.^2)
-            add!(acc,"AF_vc_4", afvc.^2)
+            add!(acc, "Ferro_vc_2", fvc)
+            add!(acc, "AF_vc_2",    afvc)
+            add!(acc, "Ferro_vc_4", fvc.^2)
+            add!(acc, "AF_vc_4",    afvc.^2)
             #add!(acc,"vc_corr", vc_corrs)
 
             # non-equilibrium relaxation method.
             if use_neq
                 for it in 1:num_temps_local
 
-                    tmp = sum([dot(init_spins_local[it][i],spins_local[it][i]) for i in 1:num_spins])
-                    push!(correlation_func[it],tmp/num_spins)
+                    tmp = sum([dot(init_spins_local[it][i], spins_local[it][i]) for i in 1:num_spins])
+                    push!(correlation_func[it], tmp / num_spins)
 
-                    push!(fvc_correlation[it],init_fvc[it]*fvc[it])
-                    push!(afvc_correlation[it],init_afvc[it]*afvc[it])
+                    push!(fvc_correlation[it],  init_fvc[it]  * fvc[it])
+                    push!(afvc_correlation[it], init_afvc[it] * afvc[it])
 
-                    push!(mq_q0_correlation[it],init_mq_q0[it]*mq_q0[it])
-                    push!(mq_sqrt3_correlation[it],init_mq_sqrt3[it]*2mq_sqrt3[it])
-                    push!(m_120degs_correlation[it],init_m_120degs[it]*m_120degs[it])
+                    push!(mq_q0_correlation[it],     init_mq_q0[it]      * mq_q0[it])
+                    push!(mq_sqrt3_correlation[it],  init_mq_sqrt3[it]   * 2 * mq_sqrt3[it])
+                    push!(m_120degs_correlation[it], init_m_120degs[it]  * m_120degs[it])
                     if mod(sweep, 100) == 0
                         #println(outf, sweep, "th: ", tmp/num_spins)
                     end
   
                 end
 
-                """ 
+                #=
                 for it in 1:num_temps_local
                     temp_maf = compute_m2_af(spins_local[it],upward_triangles)
                     push!(maf_time_evo[it],maf_time_evo[it][1]*temp_maf)
                 end 
-                """
+                =#
+
             end
         end
         push!(elpsCPUtime, CPUtime_us() - ts_start)
@@ -605,7 +611,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     loop_found_rate = mean_gather(acc,"loop_found_rate", comm)
     loop_accept_rate = mean_gather(acc,"loop_accept_rate", comm)
     CPUtime = mean_gather_array(acc_proc, "CPUtime", comm)
-    ave_loop_length = mean_gather(acc,"loop_length",comm)
+    #ave_loop_length = mean_gather(acc,"loop_length",comm)
     m2_af = mean_gather(acc, "m_af_2", comm)
     T2_op = mean_gather(acc, "T_op_2", comm)
     m2q_q0 = mean_gather(acc, "mq0_2", comm)
@@ -629,25 +635,25 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     MPI.Barrier(comm)
   
     for it in 1:num_temps_local
-        write_spin_config("spin_config_$(it+start_idx-1).txt",spins_local[it])
+        #write_spin_config("spin_config_$(it+start_idx-1).txt",spins_local[it])
     end
   
 
     # To save to HDF5 file,add correlation functions to accumulator.
     if use_neq
-        add!(acc,"Gt",correlation_func)
-        add!(acc,"fvc_corr",fvc_correlation)
-        add!(acc,"afvc_corr",afvc_correlation)
-        add!(acc,"mq_q0_corr",mq_q0_correlation)
-        add!(acc,"mq_sqrt3_corr",mq_sqrt3_correlation)
-        add!(acc,"m_120degs_corr",m_120degs_correlation)
+        add!(acc,"Gt",             correlation_func)
+        add!(acc,"fvc_corr",       fvc_correlation)
+        add!(acc,"afvc_corr",      afvc_correlation)
+        add!(acc,"mq_q0_corr",     mq_q0_correlation)
+        add!(acc,"mq_sqrt3_corr",  mq_sqrt3_correlation)
+        add!(acc,"m_120degs_corr", m_120degs_correlation)
     end
  
     # To save to HDF5 file,add energy histgrams to accumulator.
-    add!(acc,"energy_histogram",energy_histogram_local)
+    add!(acc,"energy_histogram", energy_histogram_local)
 
     # To save to HDF5 file,add loop length histgrams to accumulator.
-    add!(acc,"loop_length_histogram",loop_length_histogram_local)
+    add!(acc,"loop_length_histogram", loop_length_histogram_local)
 
     #add!(acc,spins_local)
 
@@ -770,7 +776,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
         close(fid)
     end
 
-    """
+    #=
     obs_names = String[]
     for base_name in ["m_af", "T_op", "mq0", "msqrt", "m120degs", "Ferro_vc", "AF_vc"]
         push!(obs_names, base_name*"_2")
@@ -782,7 +788,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
         fid["temperatures"] = temps
     end
     save_result(fid, acc, comm, obs_names)
-    """
+    =#
 
     # Stat of Replica Exchange MC
     print_stat(rex, comm, outf)

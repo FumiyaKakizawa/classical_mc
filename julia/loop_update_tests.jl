@@ -35,10 +35,10 @@ function all_to_all_model(num_spins)
     Jij = []
     for ispin=1:num_spins
         for jspin=ispin+1:num_spins
-            add_Jij!(unique_Jij, Jij, ispin, jspin, rand(), rand(), rand(),1)
+            add_Jij!(unique_Jij, Jij, ispin, jspin, rand(), rand(), rand(), 1)
         end
     end
-    model = JModel(num_spins, Jij)
+    model = JModel(num_spins, unique_Jij, Jij)
     return model
 end
 
@@ -77,7 +77,16 @@ function test_find_loop(model::JModel)
         spins[i] = (cos(theta),sin(theta),0.)
     end
 
-    loop_length,sum_boundary_spins = find_loop(spins,spin_idx_on_loop,u,first_spin_idx,second_spin_idx, max_loop_length, work, true, false)
+    loop_length,sum_boundary_spins = find_loop(spins,
+                                               spin_idx_on_loop,
+                                               u,
+                                               first_spin_idx,
+                                               second_spin_idx, 
+                                               max_loop_length, 
+                                               work, 
+                                               true, 
+                                               false)
+    println(loop_length)
     @assert loop_length > 0
     @assert all(work .== 0)
 
@@ -112,17 +121,23 @@ if abspath(PROGRAM_FILE) == @__FILE__
     println("unit test results")
     
     #DEBUG
+    #=
     Random.seed!(10)
     model  = ring_plus_one_model()
     println("ring_plus_one_model results")
     test_find_loop(model)
-    
-    """
+    =# 
+
+    # compile
+    Random.seed!(10)
+    model = all_to_all_model(20)
+
+    Profile.clear_malloc_data()
+
     Random.seed!(10)
     model = all_to_all_model(20)
     println("all_to_all_model results")
     test_find_loop(model)
-    """
 end
 
 end
