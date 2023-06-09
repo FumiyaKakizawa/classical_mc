@@ -406,6 +406,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
 
 
     for sweep in 1:num_sweeps
+        GC.gc()
         # Output roughtly every 10 sececonds
         if rank == 0 && time_ns() - last_output_time > 1e+10
             println(outf, "Done $sweep sweeps")
