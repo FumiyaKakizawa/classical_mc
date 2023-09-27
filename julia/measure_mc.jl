@@ -113,7 +113,7 @@ function compute_vector_chirality(spins::AbstractArray{Float64,2},
     vc = 0.0
     num_spins = size(spins)[2]
     num_triangles = length(triangles)
-    @assert num_spins == 3num_triangles
+    @assert num_spins == 3 * num_triangles
     for i in triangles
         for j in 1:3
             s1 = view(spins, :, i[j])
@@ -124,24 +124,25 @@ function compute_vector_chirality(spins::AbstractArray{Float64,2},
     return vc / num_spins
 end
 
-function compute_all_vector_chiralities(vc::Vector{Float64}, 
+function compute_all_vector_chiralities(#vc::Vector{Float64}, 
                                         spins::AbstractArray{Float64,2},
                                         triangles
                                         )
     num_spins = size(spins)[2]
     num_triangles = length(triangles)
+    vc = zeros(Float64, length(triangles))
     @assert 3 * length(vc) == num_spins == 3 * num_triangles 
 
-    # initialize 
-    for i in eachindex(vc)
-        vc[i] = 0.0
-    end
+    ## initialize 
+    #for i in eachindex(vc)
+    #    vc[i] = 0.0
+    #end
 
     for it in eachindex(triangles)
         i = triangles[it]
         for j in 1:3
             s1 = view(spins, :, i[j])
-            s2 = view(spins, :, i[ifelse(j==3,1,j+1)])
+            s2 = view(spins, :, i[ifelse(j==3, 1, j+1)])
             vc[it] += mycross(s1, s2)
         end
     end
@@ -149,15 +150,15 @@ function compute_all_vector_chiralities(vc::Vector{Float64},
     return vc
 end
 
-function compute_vector_chiralities(vc::Vector{Float64},
-                                    spins::AbstractArray{Float64,2},
+function compute_vector_chiralities(#vc::Vector{Float64},
+                                    spins::AbstractArray{Float64, 2},
                                     utriangles, 
                                     dtriangles
                                     )
     @assert length(utriangles) == length(dtriangles)
     num_spins = size(spins)[2]
-    uc_all = compute_all_vector_chiralities(vc, spins, utriangles)
-    dc_all = compute_all_vector_chiralities(vc, spins, dtriangles)
+    uc_all = compute_all_vector_chiralities(spins, utriangles)
+    dc_all = compute_all_vector_chiralities(spins, dtriangles)
     uc, dc = sum(uc_all)/num_spins, sum(dc_all)/num_spins
 #    (uc+dc)^2/3, (uc-dc)^2/3, uc_all[1] * [uc_all; dc_all]
     (uc + dc)^2 / 3, (uc - dc)^2 / 3 
@@ -200,7 +201,8 @@ end
 function compute_loop_length(spins::Vector{HeisenbergSpin},
                              updater::SingleSpinFlipUpdater,
                              loop_updater::LoopUpdater,
-                             max_loop_length,verbose)
+                             max_loop_length,
+                             verbose::Bool)
      
     work = loop_updater.work
     spins_idx_on_loop = loop_updater.spins_on_loop
@@ -216,10 +218,10 @@ function compute_loop_length(spins::Vector{HeisenbergSpin},
     end
     second_spin_idx = rand(candidate_second_spin_idx[1:nn_coord_num])
 
-    loop_length,sum_boundary_spins = find_loop(spins,spins_idx_on_loop,updater,first_spin_idx,
-                                                   second_spin_idx,max_loop_length,work,verbose)  
+    loop_length, sum_boundary_spins = find_loop(spins, spins_idx_on_loop, updater, first_spin_idx,
+                                                second_spin_idx, max_loop_length, work, verbose)  
 
-    if mod(loop_length,2) == 0
+    if mod(loop_length, 2) == 0
         return loop_length
     else
         return 0

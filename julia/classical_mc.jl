@@ -52,7 +52,7 @@ function distribute_temps(rank, num_temps, num_proc)
 end
 
 # Read non-zero elements in the right-upper triangle part of Jij
-"""
+#=
 function read_Jij(Jij_file::String, num_spins::Int64)
     Jij = Vector{Tuple{SpinIndex,SpinIndex,Float64,Float64,Float64,Int64}}(undef, 0)
     open(Jij_file, "r" ) do fp
@@ -79,7 +79,7 @@ function read_Jij(Jij_file::String, num_spins::Int64)
     end
     return Jij
 end
-"""
+=#
 
 
 function read_triangles(file_name::String,num_spins::Int64)
@@ -344,7 +344,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     loop_length_histogram_local = [Float64[] for _ in 1:num_temps_local]
 
     # For measuring vector spin chiralities
-    vc = zeros(Float64, length(upward_triangles)) 
+    #vc = zeros(Float64, length(upward_triangles)) 
 
     # Non-equilibrium relaxation method.
     if use_neq
@@ -367,7 +367,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
         init_mq_sqrt3   = zeros(Float64, num_temps_local)
         init_m_120degs  = zeros(Float64, num_temps_local)
         for it in 1:num_temps_local
-            init_fvc[it], init_afvc[it] = compute_vector_chiralities(vc, spins_array[it], upward_triangles, downward_triangles) 
+            init_fvc[it], init_afvc[it] = compute_vector_chiralities(spins_array[it], upward_triangles, downward_triangles) 
             init_mq_q0[it]    = compute_mq((0.,0.),   site_pos,spins_local[it], upward_triangles)
             init_mq_sqrt3[it] = compute_mq((1/3,1/3), site_pos,spins_local[it], upward_triangles)
             init_m_120degs[it] = compute_m_120degrees(spins_local[it])
@@ -384,7 +384,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             tmp = sum([dot(spins_local[it][i], spins_local[it][i]) for i in 1:num_spins])
             push!(correlation_func[it],tmp / num_spins)
         
-            temp_fvc, temp_afvc  = compute_vector_chiralities(vc, spins_array[it], upward_triangles, downward_triangles) 
+            temp_fvc, temp_afvc  = compute_vector_chiralities(spins_array[it], upward_triangles, downward_triangles) 
             push!(fvc_correlation[it],  init_fvc[it]  * temp_fvc)
             push!(afvc_correlation[it], init_afvc[it] * temp_afvc)
 
@@ -506,7 +506,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
                 push!(loop_length_histogram_local[it], measured_loop_length[it])
 
             end
-            =# 
+            =#
 
             if !in(0, measured_loop_length)
                 add!(acc,"loop_length",measured_loop_length)
@@ -557,7 +557,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
             afvc = zeros(Float64, num_temps_local)
             vc_corrs = Vector{Float64}[]
             for it in 1:num_temps_local
-                fvc[it], afvc[it] = compute_vector_chiralities(vc, spins_array[it], upward_triangles, downward_triangles)
+                fvc[it], afvc[it] = compute_vector_chiralities(spins_array[it], upward_triangles, downward_triangles)
                 #push!(vc_corrs, vc_corr)
             end
             add!(acc, "Ferro_vc_2", fvc)
@@ -636,7 +636,7 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     MPI.Barrier(comm)
   
     for it in 1:num_temps_local
-        #write_spin_config("spin_config_$(it+start_idx-1).txt",spins_local[it])
+        write_spin_config("spin_config_$(it+start_idx-1).txt",spins_local[it])
     end
   
 
@@ -659,7 +659,6 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
     #add!(acc,spins_local)
 
     # Output time evolution of order parameter.
-    #=
     if use_neq
         for itemp in 1:num_temps_local
 
@@ -707,7 +706,6 @@ function solve_(input_file::String, comm, prefix, seed_shift, outf)
 
         end
     end
-    =#
 
     if rank == 0
         println(outf)
